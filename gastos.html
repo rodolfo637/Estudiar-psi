@@ -113,6 +113,10 @@ label{display:block;font-size:.8rem;color:var(--muted);font-weight:600;margin:10
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .chips button{padding:6px 12px;border-radius:99px;background:var(--surface2);border:1px solid var(--line);font-size:.82rem;font-weight:600;color:var(--muted)}
 .chips button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.catrow{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:14px}
+.catrow b{flex:1;min-width:0;font-size:.92rem}
+.catrow small{color:var(--muted);font-size:.76rem;font-weight:600;white-space:nowrap}
+.catrow button{padding:6px;font-size:1rem}
 </style>
 </head>
 <body>
@@ -259,6 +263,26 @@ label{display:block;font-size:.8rem;color:var(--muted);font-weight:600;margin:10
     <label>Meses de necesidades a cubrir</label><input id="eMonths" type="number" min="1" max="24">
   </div>
   <div class="card" style="margin-top:14px">
+    <h3>🏷️ Categorías</h3>
+    <div class="chips" id="cTypeChips">
+      <button data-ct="gasto" class="on">Gastos</button><button data-ct="ingreso">Ingresos</button>
+      <button data-ct="ahorro">Ahorro</button><button data-ct="inversion">Inversión</button>
+    </div>
+    <div class="list" id="catList"></div>
+    <div class="row3" style="margin-top:12px">
+      <div><label>Ícono (emoji)</label><input id="kEmoji" maxlength="8" placeholder="🐶"></div>
+      <div><label>Nombre</label><input id="kName" placeholder="Ej: Mascotas"></div>
+      <div id="kGroupBox"><label>Cuenta como</label><select id="kGroup"><option value="N">Necesidad</option><option value="W">Gusto</option></select></div>
+    </div>
+    <label>Palabras clave para la voz (separadas por coma)</label><input id="kWords" placeholder="Ej: veterinaria, alimento, perro, gato">
+    <div class="actions">
+      <button class="btn ghost" id="kCancel" hidden>Cancelar</button>
+      <button class="btn" id="kSave">Agregar categoría</button>
+    </div>
+    <div class="actions"><button class="btn ghost" id="kReset">Restaurar categorías originales</button></div>
+    <div class="hint">Tocá ✏️ para editar o 🗑️ para eliminar. Las palabras clave hacen que la voz reconozca la categoría: si decís “gasté 20 mil en veterinaria”, va a Mascotas. Al eliminar una categoría, sus movimientos pasan a “Otros”.</div>
+  </div>
+  <div class="card" style="margin-top:14px">
     <h3>💾 Tus datos</h3>
     <div class="hint" style="margin:0 0 12px">Todo se guarda solo en este dispositivo (localStorage). Hacé un respaldo cada tanto.</div>
     <div class="actions" style="flex-wrap:wrap">
@@ -346,6 +370,10 @@ var KEY='misgastos.v1';
 var S={tx:[],goals:[],cur:'ARS',rate:1200,rateType:'blue',rateAt:null,pct:{n:50,w:30,s:20},theme:'dark',emMonths:6,inf:2.5};
 try{var raw=localStorage.getItem(KEY);if(raw){var o=JSON.parse(raw);for(var k in o)S[k]=o[k];}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+var DEF_CATS=JSON.stringify(CATS);            // categorías de fábrica
+if(!S.cats)S.cats=JSON.parse(DEF_CATS);
+CATS=S.cats;                                  // desde acá, las categorías son editables y se guardan
+function dfltCat(l){for(var i=0;i<l.length;i++)if(!(l[i].k&&l[i].k.length))return l[i];return l[l.length-1];}
 var now=new Date();
 var view={y:now.getFullYear(),m:now.getMonth(),filter:'todos',q:''};
 
@@ -410,8 +438,8 @@ function parseEntry(text){
   else if(has(/\b(ahorre|ahorro|ahorrar|guarde|guardo|aparte|separe)\b/)||has(/\bcompre (\S+ ){0,2}(dolares|usd)\b/))type='ahorro';
   else if(has(/\b(cobre|cobro|ingreso|ingresaron|sueldo|aguinaldo|me pagaron|me depositaron|gane|recibi|me transfirieron|vendi)\b/))type='ingreso';
   var cur=has(/\b(dolar|dolares|usd|verdes|us)\b/)?'USD':'ARS';
-  var list=CATS[type],cat=list[list.length-1].id,best=0;
-  list.forEach(function(c){c.k.forEach(function(k){if(n.indexOf(' '+k+' ')>-1||new RegExp('\\b'+k+'\\b').test(n)){if(k.length>best){best=k.length;cat=c.id;}}});});
+  var list=CATS[type],cat=dfltCat(list).id,best=0;
+  list.forEach(function(c){(c.k||[]).forEach(function(k){if(n.indexOf(' '+k+' ')>-1){if(k.length>best){best=k.length;cat=c.id;}}});});
   // si dijo "gasté" y no hubo match en gastos, probar si la palabra pertenece a otro tipo no aplica: queda "otros"
   var date=todayISO();
   if(has(/\bayer\b/)){var d=new Date();d.setDate(d.getDate()-1);date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -423,7 +451,7 @@ window.__parse=parseEntry; // útil para pruebas
 /* ---------- Modal ---------- */
 var mState={type:'gasto'};
 function fillCats(sel){
-  $('mCat').innerHTML=CATS[mState.type].map(function(c){return '<option value="'+c.id+'">'+c.e+' '+esc(c.n)+(mState.type==='gasto'?(c.g==='N'?' · necesidad':' · gusto'):'')+'</option>';}).join('');
+  $('mCat').innerHTML=CATS[mState.type].map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.e)+' '+esc(c.n)+(mState.type==='gasto'?(c.g==='N'?' · necesidad':' · gusto'):'')+'</option>';}).join('');
   if(sel)$('mCat').value=sel;
   Array.prototype.forEach.call($('mTypes').children,function(b){b.classList.toggle('on',b.dataset.t===mState.type);});
   $('mGoalBox').hidden=!(mState.type==='ahorro'&&S.goals.length);
@@ -558,7 +586,7 @@ function renderMovs(){
     return (view.filter==='todos'||t.type===view.filter)&&(!q||norm(t.desc+' '+catOf(t).n).indexOf(q)>-1);
   }).sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:(a.id<b.id?1:-1);});
   $('txList').innerHTML=l.length?l.map(function(t){var c=catOf(t),sg=t.type==='ingreso'?'+':'−',cl=t.type==='ingreso'?'pos':t.type==='gasto'?'neg':'';
-    return '<div class="tx"><div class="ic">'+c.e+'</div><div class="d"><b>'+esc(t.desc||c.n)+'</b><small>'+esc(t.date.split('-').reverse().join('/'))+' · '+esc(c.n)+' · '+TYPE_LBL[t.type]+'</small></div>'+
+    return '<div class="tx"><div class="ic">'+esc(c.e)+'</div><div class="d"><b>'+esc(t.desc||c.n)+'</b><small>'+esc(t.date.split('-').reverse().join('/'))+' · '+esc(c.n)+' · '+TYPE_LBL[t.type]+'</small></div>'+
       '<div class="a '+cl+'">'+sg+' '+esc(fmt(t.amt,t.cur))+'</div><button class="x" data-del="'+esc(t.id)+'" aria-label="Eliminar">🗑️</button></div>';}).join('')
     :'<div class="empty">No hay movimientos para mostrar.</div>';
 }
@@ -649,9 +677,57 @@ $('impBtn').onclick=function(){$('impFile').click();};
 $('impFile').onchange=function(){var f=this.files[0];if(!f)return;var rd=new FileReader();
   rd.onload=function(){try{var o=JSON.parse(rd.result);if(!o||!Array.isArray(o.tx))throw 0;
     if(!confirm('Esto reemplaza los datos actuales por los del respaldo ('+o.tx.length+' movimientos). ¿Continuar?'))return;
-    for(var k in o)S[k]=o[k];save();syncInputs();render();toast('Respaldo importado');}catch(e){toast('Archivo inválido');}};
+    for(var k in o)S[k]=o[k];if(!S.cats)S.cats=JSON.parse(DEF_CATS);CATS=S.cats;save();syncInputs();render();toast('Respaldo importado');}catch(e){toast('Archivo inválido');}};
   rd.readAsText(f);this.value='';};
 $('wipe').onclick=function(){if(confirm('¿Borrar TODOS los movimientos y metas? No se puede deshacer.')&&confirm('Última confirmación: ¿borrar todo?')){S.tx=[];S.goals=[];save();render();toast('Datos borrados');}};
+
+/* ---------- Categorías (agregar, editar, eliminar) ---------- */
+var kState={type:'gasto',edit:null};
+function renderCats(){
+  Array.prototype.forEach.call($('cTypeChips').children,function(b){b.classList.toggle('on',b.dataset.ct===kState.type);});
+  $('kGroupBox').hidden=kState.type!=='gasto';
+  $('catList').innerHTML=CATS[kState.type].map(function(c){
+    var n=S.tx.filter(function(t){return t.type===kState.type&&t.cat===c.id;}).length;
+    return '<div class="catrow"><span>'+esc(c.e)+'</span><b>'+esc(c.n)+'</b><small>'+(kState.type==='gasto'?(c.g==='N'?'Necesidad':'Gusto')+' · ':'')+n+' mov.</small>'+
+      '<button data-ked="'+esc(c.id)+'" aria-label="Editar">✏️</button><button data-kdel="'+esc(c.id)+'" aria-label="Eliminar">🗑️</button></div>';}).join('');
+  $('kSave').textContent=kState.edit?'Guardar cambios':'Agregar categoría';$('kCancel').hidden=!kState.edit;
+}
+function kClear(){kState.edit=null;$('kEmoji').value='';$('kName').value='';$('kWords').value='';$('kGroup').value='N';}
+function kFind(id){var l=CATS[kState.type];for(var i=0;i<l.length;i++)if(l[i].id===id)return l[i];return null;}
+$('cTypeChips').onclick=function(e){var t=e.target.dataset.ct;if(t){kState.type=t;kClear();renderCats();}};
+$('catList').onclick=function(e){
+  var ed=e.target.dataset.ked,del=e.target.dataset.kdel,c;
+  if(ed&&(c=kFind(ed))){kState.edit=ed;$('kEmoji').value=c.e;$('kName').value=c.n;$('kGroup').value=c.g||'N';$('kWords').value=(c.k||[]).join(', ');renderCats();$('kName').focus();}
+  if(del&&(c=kFind(del))){
+    var l=CATS[kState.type];
+    if(l.length<2){toast('Tiene que quedar al menos una categoría');return;}
+    if(del==='emergencia'){toast('“Fondo de emergencia” se puede renombrar pero no eliminar: la usa el cálculo del fondo');return;}
+    var rest=l.filter(function(x){return x.id!==del;}),dest=dfltCat(rest);
+    var n=S.tx.filter(function(t){return t.type===kState.type&&t.cat===del;}).length;
+    if(!confirm('¿Eliminar la categoría “'+c.n+'”?'+(n?' Sus '+n+' movimientos pasan a “'+dest.n+'”.':'')))return;
+    S.tx.forEach(function(t){if(t.type===kState.type&&t.cat===del)t.cat=dest.id;});
+    CATS[kState.type]=rest;if(kState.edit===del)kClear();save();render();toast('Categoría eliminada');
+  }
+};
+$('kSave').onclick=function(){
+  var name=$('kName').value.trim(),em=$('kEmoji').value.trim()||'🏷️';
+  if(!name){toast('Poné un nombre para la categoría');$('kName').focus();return;}
+  var l=CATS[kState.type];
+  if(l.some(function(c){return c.id!==kState.edit&&norm(c.n)===norm(name);})){toast('Ya existe una categoría con ese nombre');return;}
+  var words=$('kWords').value.split(',').map(function(w){return norm(w).replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();}).filter(Boolean);
+  var c=kState.edit?kFind(kState.edit):null,was=!!c;
+  if(!c){c={id:'c'+Date.now().toString(36)};l.push(c);
+    var nn=norm(name).replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();if(nn&&words.indexOf(nn)<0)words.push(nn);}
+  c.n=name;c.e=em;c.k=words;if(kState.type==='gasto')c.g=$('kGroup').value;
+  kClear();save();render();toast(was?'Categoría actualizada':'Categoría agregada');
+};
+$('kCancel').onclick=function(){kClear();renderCats();};
+$('kReset').onclick=function(){
+  if(!confirm('¿Volver a las categorías originales? Los movimientos de categorías que dejen de existir pasan a “Otros”.'))return;
+  S.cats=JSON.parse(DEF_CATS);CATS=S.cats;
+  S.tx.forEach(function(t){var l=CATS[t.type]||[];if(l.length&&!l.some(function(c){return c.id===t.cat;}))t.cat=dfltCat(l).id;});
+  kClear();save();render();toast('Categorías restauradas');
+};
 
 /* ---------- Navegación ---------- */
 $('tabs').onclick=function(e){var v=e.target.dataset.v;if(!v)return;
@@ -670,7 +746,7 @@ function syncInputs(){
 function render(){
   var ml=new Date(view.y,view.m,1).toLocaleDateString('es-AR',{month:'long',year:'numeric'});$('mLabel').textContent=ml.charAt(0).toUpperCase()+ml.slice(1);
   Array.prototype.forEach.call($('curPill').children,function(b){b.classList.toggle('on',b.dataset.cur===S.cur);});
-  renderInicio();renderMovs();renderCalc();renderMetas();
+  renderInicio();renderMovs();renderCalc();renderMetas();renderCats();
 }
 applyTheme();syncInputs();$('cCur').value=S.cur;render();
 if(!S.rateAt||Date.now()-S.rateAt>6*3600*1000)fetchRate(true);
