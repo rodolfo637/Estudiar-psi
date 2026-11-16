@@ -489,7 +489,10 @@ $('quickTxt').onkeydown=function(e){if(e.key==='Enter')$('quickGo').click();};
 
 /* ---------- Voz ---------- */
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition,rec=null,listening=false;
+window.__vozResultado=function(t){fromText(String(t||''),true);};   // respuesta del reconocimiento nativo (app Android)
+window.__vozError=function(m){toast(m);};
 $('micBtn').onclick=function(){
+  if(window.AndroidVoz){AndroidVoz.escuchar();return;}
   if(!SR){toast('Tu navegador no soporta voz. Usá Chrome, Edge o Safari, o escribí la frase.');$('quickTxt').focus();return;}
   if(listening){rec.stop();return;}
   rec=new SR();rec.lang='es-AR';rec.interimResults=false;rec.maxAlternatives=1;
@@ -655,17 +658,23 @@ $('goals').onclick=function(e){var id=e.target.dataset.gdel;if(id&&confirm('¿El
 
 /* ---------- Ajustes ---------- */
 function rateInfo(){$('rInfo').textContent=S.rateAt?'Última actualización: '+new Date(S.rateAt).toLocaleString('es-AR')+' · Fuente: dolarapi.com':'Cotización cargada manualmente.';}
+function applyRate(d,silent){
+  if(d&&d.venta>0){S.rate=d.venta;S.rateAt=Date.now();save();syncInputs();render();if(!silent)toast('Dólar '+S.rateType+': $ '+d.venta.toLocaleString('es-AR'));}
+}
 function fetchRate(silent){
   if(S.rateType==='manual'){if(!silent)toast('Modo manual: escribí la cotización');return;}
-  fetch('https://dolarapi.com/v1/dolares/'+S.rateType).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){
-    if(d&&d.venta>0){S.rate=d.venta;S.rateAt=Date.now();save();syncInputs();render();if(!silent)toast('Dólar '+S.rateType+': $ '+d.venta.toLocaleString('es-AR'));}
-  }).catch(function(){if(!silent)toast('No pude obtener la cotización. Cargala a mano.');});
+  var fail=function(){if(!silent)toast('No pude obtener la cotización. Cargala a mano.');};
+  if(window.AndroidVoz&&AndroidVoz.cotizar){   // en la app Android la consulta la hace el teléfono
+    window.__cotizOk=function(txt){try{applyRate(JSON.parse(txt),silent);}catch(e){fail();}};
+    window.__cotizErr=fail;AndroidVoz.cotizar(S.rateType);return;
+  }
+  fetch('https://dolarapi.com/v1/dolares/'+S.rateType).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){applyRate(d,silent);}).catch(fail);
 }
 $('rFetch').onclick=function(){fetchRate(false);};
 $('rType').onchange=function(){S.rateType=this.value;save();fetchRate(false);};
 $('rVal').onchange=function(){var v=parseFloat(this.value);if(v>0){S.rate=v;S.rateAt=null;save();rateInfo();render();}};
 $('eMonths').onchange=function(){S.emMonths=Math.max(1,parseInt(this.value)||6);save();renderMetas();};
-function dl(name,content,type){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:type}));a.download=name;document.body.appendChild(a);a.click();a.remove();}
+function dl(name,content,type){if(window.AndroidVoz&&AndroidVoz.guardar){AndroidVoz.guardar(name,content,type);return;}var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:type}));a.download=name;document.body.appendChild(a);a.click();a.remove();}
 $('expJson').onclick=function(){dl('mis-gastos-'+todayISO()+'.json',JSON.stringify(S,null,2),'application/json');};
 $('expCsv').onclick=function(){
   var q=function(s){return '"'+String(s).replace(/"/g,'""')+'"';};
