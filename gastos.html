@@ -117,6 +117,17 @@ label{display:block;font-size:.8rem;color:var(--muted);font-weight:600;margin:10
 .catrow b{flex:1;min-width:0;font-size:.92rem}
 .catrow small{color:var(--muted);font-size:.76rem;font-weight:600;white-space:nowrap}
 .catrow button{padding:6px;font-size:1rem}
+textarea{font:inherit;color:inherit;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;min-height:84px;outline:none;resize:vertical}
+textarea:focus{border-color:var(--accent)}
+input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
+.score{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.score .num{font-size:3.2rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+.score .num small{font-size:1rem;color:var(--muted);font-weight:600}
+.score .lbl{font-weight:700;font-size:1.05rem}
+.tip .imp{display:inline-block;margin-top:6px;font-size:.78rem;font-weight:700;color:var(--ok)}
+.steps{display:grid;gap:8px;margin-top:10px;counter-reset:st}
+.steps div{background:var(--surface2);border-radius:12px;padding:10px 12px 10px 42px;position:relative;font-size:.9rem;line-height:1.45}
+.steps div:before{counter-increment:st;content:counter(st);position:absolute;left:12px;top:10px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;font-size:.78rem;display:grid;place-items:center}
 .types{grid-template-columns:repeat(5,1fr)}
 .types button{font-size:.72rem;padding:9px 2px}
 .acct{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:14px}
@@ -161,6 +172,7 @@ label{display:block;font-size:.8rem;color:var(--muted);font-weight:600;margin:10
     </div>
     <nav class="tabs" id="tabs">
       <button data-v="inicio" class="on">🏠 Inicio</button>
+      <button data-v="estrategia">🧠 Estrategia</button>
       <button data-v="movs">📋 Movimientos</button>
       <button data-v="cuentas">💼 Cuentas</button>
       <button data-v="reporte">📄 Reportes</button>
@@ -176,7 +188,8 @@ label{display:block;font-size:.8rem;color:var(--muted);font-weight:600;margin:10
 <section class="view on" id="v-inicio">
   <div class="card"><h3>💼 Mi plata hoy</h3><div id="homeAccts"></div></div>
   <div class="grid kpis" id="kpis" style="margin-top:14px"></div>
-  <div class="card" style="margin-top:14px"><h3>🤖 Tu asistente</h3><div class="tips" id="tips"></div></div>
+  <div class="card" style="margin-top:14px"><h3>🤖 Tu asistente</h3><div class="tips" id="tips"></div>
+    <div class="actions"><button class="btn ghost" id="goSt">🧠 Ver ideas estratégicas para mejorar</button></div></div>
   <div class="card" style="margin-top:14px"><h3>📊 Tu mes vs. regla <span id="ruleLbl"></span></h3><div id="ruleBars"></div></div>
   <div class="grid two" style="margin-top:14px">
     <div class="card"><h3>🥧 Gastos por categoría</h3><div class="pie" id="pieCat"></div></div>
@@ -190,6 +203,28 @@ label{display:block;font-size:.8rem;color:var(--muted);font-weight:600;margin:10
     </div>
     <div class="hint">🎙️ También podés tocar el micrófono y hablar natural: <i>“cobré 900 mil de sueldo”</i>, <i>“gasté 8500 en nafta con mercado pago”</i>, <i>“ahorré 100 dólares”</i>, <i>“pasé 50 mil de banco a efectivo”</i>.</div>
     <div class="actions"><button class="btn" id="pdfHome">📄 Exportar a PDF</button><button class="btn ghost" id="xlsHome">📊 Exportar a Excel</button></div>
+  </div>
+</section>
+
+<!-- ESTRATEGIA -->
+<section class="view" id="v-estrategia">
+  <div class="card"><h3>🧠 Tu salud financiera</h3><div id="stScore"></div></div>
+  <div class="card" style="margin-top:14px"><h3>🧭 Tu etapa y el plan para avanzar</h3><div id="stPlan"></div></div>
+  <div class="card" style="margin-top:14px"><h3>💡 Ideas estratégicas, de mayor a menor impacto</h3><div class="tips" id="stIdeas"></div>
+    <div class="hint">Los impactos son estimaciones a partir de tus números del mes que estás viendo, para comparar ideas entre sí. Es información general, no asesoramiento financiero profesional.</div></div>
+  <div class="card" style="margin-top:14px">
+    <h3>🎛️ ¿Qué pasa si…?</h3>
+    <label>Recorto mis gustos un <b id="wCutV">10</b>%</label><input type="range" id="wCut" min="0" max="60" step="5" value="10">
+    <label>Bajo mis necesidades un <b id="nCutV">0</b>%</label><input type="range" id="nCut" min="0" max="30" step="5" value="0">
+    <label>Aumento mis ingresos un <b id="iUpV">0</b>%</label><input type="range" id="iUp" min="0" max="60" step="5" value="0">
+    <div class="split" id="stWhat"></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>💬 Consultale a la IA</h3>
+    <textarea id="stQ" placeholder="Ej: ¿Cómo llego a ahorrar el 25% sin dejar de salir? ¿Me conviene cancelar la deuda de la tarjeta o seguir ahorrando?"></textarea>
+    <div class="actions"><button class="btn" id="stAsk">🤖 Preguntar</button></div>
+    <div class="hint" id="stAiHint"></div>
+    <div class="rep" id="stAns" style="margin-top:10px"></div>
   </div>
 </section>
 
@@ -1132,42 +1167,132 @@ function aiData(){
     acumulado:{ahorro:r2n(sum(sav,valNow)),inversion:r2n(sum(inv,valNow)),fondoEmergencia:r2n(sum(sav.filter(function(t){return t.cat==='emergencia';}),valNow)),mesesObjetivoFondo:S.emMonths},
     metas:S.goals.map(function(g){return{nombre:g.name,objetivo:g.amt,moneda:g.cur};}),cantidadMovimientos:monthTx(view.y,view.m).length};
 }
+var aiPend=null;   // {btn,label,cb} de la consulta en curso
 function aiDone(status,txt){
-  $('aiBtn').disabled=false;$('aiBtn').textContent='🤖 Generar análisis con IA';
-  var d;try{d=JSON.parse(txt);}catch(e){toast('La IA devolvió una respuesta que no pude leer');return;}
+  var pnd=aiPend;aiPend=null;if(!pnd)return;
+  pnd.btn.disabled=false;pnd.btn.textContent=pnd.label;
+  var d;try{d=JSON.parse(txt);}catch(e){toast(status===0?'Sin conexión con el servicio de IA':'La IA devolvió una respuesta que no pude leer');return;}
   if(status!==200||d.type==='error'){var m=d&&d.error&&d.error.message?d.error.message:'error '+status;
     toast(status===401?'La clave de API no es válida':status===429?'Límite de uso alcanzado, probá en un rato':'No se pudo generar: '+m);return;}
-  if(d.stop_reason==='refusal'){toast('La IA no pudo generar este informe');return;}
+  if(d.stop_reason==='refusal'){toast('La IA no pudo responder esta consulta');return;}
   var text=(d.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('\n').trim();
   if(!text){toast('La IA no devolvió texto');return;}
-  S.aiRep={ym:ymKey(),text:text,date:new Date().toLocaleDateString('es-AR'),model:d.model||AI_MODEL};save();renderReport();
-  toast(d.stop_reason==='max_tokens'?'Informe generado (quedó cortado por longitud)':'✅ Informe con IA agregado al reporte');
+  pnd.cb(text,d);
 }
 window.__iaResp=function(status,txt){aiDone(Number(status),String(txt));};
-$('aiBtn').onclick=function(){
+function aiCall(system,user,btn,cb){
   var key=aiKey();
   if(!key){toast('Primero cargá tu clave de Anthropic en Ajustes');return;}
-  if(!monthTx(view.y,view.m).length){toast('No hay movimientos este mes para analizar');return;}
-  var body=JSON.stringify({model:AI_MODEL,max_tokens:16000,fallbacks:'default',
-    system:'Sos un analista de finanzas personales que trabaja para una persona que vive en Argentina. Recibís el resumen de un mes de su economía y redactás un informe en español rioplatense, claro y directo, para ayudarla a cuidar su plata y hacerla crecer. '+
-      'El contexto argentino importa: inflación alta, convivencia de pesos y dólares, billeteras virtuales con cuentas remuneradas, plazo fijo tradicional y UVA, fondos comunes money market, dólar MEP, CEDEARs y obligaciones negociables. '+
-      'Basate únicamente en los datos recibidos y citá los números concretos; si falta un dato para afirmar algo, decilo en lugar de suponerlo. No prometas rendimientos ni recomiendes un producto o entidad en particular: hablá de tipos de instrumento y de qué conviene resolver primero. '+
-      'Estructura del informe, con estos títulos en líneas que empiezan con "## ": Diagnóstico del mes; Alertas; Dónde recortar; Plan de acción para los próximos 30 días; Ahorro e inversión; Manejo de efectivo y billeteras. '+
-      'Usá párrafos cortos y listas con guiones, sin tablas. Cerrá con una línea aclarando que es información general y no asesoramiento financiero profesional.',
-    messages:[{role:'user',content:'Estos son mis números de '+monthLabel()+' (montos en '+(S.cur==='USD'?'dólares':'pesos argentinos')+', salvo los saldos de cuentas, que están en la moneda de cada cuenta):\n\n'+JSON.stringify(aiData(),null,1)}]});
-  $('aiBtn').disabled=true;$('aiBtn').textContent='⏳ Generando informe…';
+  if(aiPend){toast('Ya hay una consulta en curso');return;}
+  var body=JSON.stringify({model:AI_MODEL,max_tokens:16000,fallbacks:'default',system:system,messages:[{role:'user',content:user}]});
+  aiPend={btn:btn,label:btn.textContent,cb:cb};btn.disabled=true;btn.textContent='⏳ Pensando…';
   if(window.AndroidVoz&&AndroidVoz.ia){AndroidVoz.ia(key,body);return;}
   fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2026-10-21',
     'anthropic-beta':'server-side-fallback-2026-07-01','anthropic-dangerous-direct-browser-access':'true'},body:body})
     .then(function(r){return r.text().then(function(t){aiDone(r.status,t);});})
-    .catch(function(){$('aiBtn').disabled=false;$('aiBtn').textContent='🤖 Generar análisis con IA';toast('Sin conexión con el servicio de IA');});
+    .catch(function(){aiDone(0,'');});
+}
+var AI_CTX='El contexto argentino importa: inflación alta, convivencia de pesos y dólares, billeteras virtuales con cuentas remuneradas, plazo fijo tradicional y UVA, fondos comunes money market, dólar MEP, CEDEARs y obligaciones negociables. '+
+  'Basate únicamente en los datos recibidos y citá los números concretos; si falta un dato para afirmar algo, decilo en lugar de suponerlo. No prometas rendimientos ni recomiendes un producto o entidad en particular: hablá de tipos de instrumento y de qué conviene resolver primero. ';
+function aiNums(){return 'Estos son mis números de '+monthLabel()+' (montos en '+(S.cur==='USD'?'dólares':'pesos argentinos')+', salvo los saldos de cuentas, que están en la moneda de cada cuenta):\n\n'+JSON.stringify(aiData(),null,1);}
+$('aiBtn').onclick=function(){
+  if(!monthTx(view.y,view.m).length){toast('No hay movimientos este mes para analizar');return;}
+  aiCall('Sos un analista de finanzas personales que trabaja para una persona que vive en Argentina. Recibís el resumen de un mes de su economía y redactás un informe en español rioplatense, claro y directo, para ayudarla a cuidar su plata y hacerla crecer. '+AI_CTX+
+      'Estructura del informe, con estos títulos en líneas que empiezan con "## ": Diagnóstico del mes; Alertas; Dónde recortar; Plan de acción para los próximos 30 días; Ahorro e inversión; Manejo de efectivo y billeteras. '+
+      'Usá párrafos cortos y listas con guiones, sin tablas. Cerrá con una línea aclarando que es información general y no asesoramiento financiero profesional.',
+    aiNums(),this,function(text,d){
+      S.aiRep={ym:ymKey(),text:text,date:new Date().toLocaleDateString('es-AR'),model:d.model||AI_MODEL};save();renderReport();
+      toast(d.stop_reason==='max_tokens'?'Informe generado (quedó cortado por longitud)':'✅ Informe con IA agregado al reporte');});
+};
+$('stAsk').onclick=function(){
+  var q=$('stQ').value.trim();
+  if(!q){toast('Escribí tu consulta');$('stQ').focus();return;}
+  aiCall('Sos un asesor estratégico de finanzas personales para una persona que vive en Argentina. Te hace una consulta y te pasa el resumen de su economía del mes. Respondé en español rioplatense, directo y concreto: primero la respuesta a lo que pregunta, después el razonamiento con sus números y, al final, de dos a cuatro pasos accionables ordenados por impacto. '+AI_CTX+
+      'Usá párrafos cortos y listas con guiones, sin tablas; títulos solo si ayudan, en líneas que empiezan con "## ". Cerrá con una línea aclarando que es información general y no asesoramiento financiero profesional.',
+    'Mi consulta: '+q+'\n\n'+aiNums(),this,function(text){S.aiQA={q:q,text:text,date:new Date().toLocaleDateString('es-AR')};save();renderEstrategia();toast('✅ Respuesta lista');});
 };
 
+/* ---------- Asistente estratégico ---------- */
+function emergInfo(){
+  var needs=[],y=now.getFullYear(),m=now.getMonth();
+  for(var i=0;i<6&&needs.length<3;i++){var T=totals(y,m);if(T.n>0)needs.push(T.n);m--;if(m<0){m=11;y--;}}
+  var avgN=needs.length?sum(needs,function(v){return v;})/needs.length:0,em=sum(S.tx.filter(function(t){return t.type==='ahorro'&&t.cat==='emergencia';}),valNow);
+  return{avgN:avgN,em:em,months:avgN?em/avgN:0,target:avgN*S.emMonths};
+}
+function liqInfo(){var r={cash:0,liq:0,neg:0};S.accts.forEach(function(a){var b=acctBal(a);if(b<-0.005)r.neg++;if(a.cur==='ARS'&&b>0){r.liq+=b;if(a.k==='fisica')r.cash+=b;}});return r;}
+function renderWhatIf(){
+  var T=totals(view.y,view.m),E=emergInfo(),a=+$('wCut').value,b=+$('nCut').value,c=+$('iUp').value;
+  $('wCutV').textContent=a;$('nCutV').textContent=b;$('iUpV').textContent=c;
+  if(T.inc<=0){$('stWhat').innerHTML='<div style="grid-column:1/-1"><small>Sin datos</small><p>Cargá tus ingresos del mes para simular.</p></div>';return;}
+  var inc=T.inc*(1+c/100),cap=inc-T.n*(1-b/100)-T.w*(1-a/100),cap0=T.inc-T.n-T.w,falta=Math.max(0,E.target-E.em);
+  $('stWhat').innerHTML='<div style="border-color:var(--ok)"><small>Podrías ahorrar por mes</small><b>'+esc(fmt(cap))+'</b><p>Hoy tu margen es '+esc(fmt(cap0))+'. Tasa de ahorro posible: '+(cap/inc*100).toFixed(0)+'%.</p></div>'+
+    '<div><small>Extra en un año</small><b>'+esc(fmt((cap-cap0)*12))+'</b><p>'+esc(fmt(cap-cap0))+' más por mes que hoy.</p></div>'+
+    '<div style="border-color:var(--accent2)"><small>Fondo de emergencia</small><b>'+(E.avgN?(falta<=0?'Completo':cap>0?Math.ceil(falta/cap)+' meses':'—'):'—')+'</b><p>'+(E.avgN?(falta<=0?'Ya cubrís '+S.emMonths+' meses de necesidades.':'Tiempo para juntar los '+esc(fmt(falta))+' que faltan, destinando todo el margen.'):'Registrá necesidades para calcularlo.')+'</p></div>';
+}
+['wCut','nCut','iUp'].forEach(function(id){$(id).oninput=renderWhatIf;});
+function renderEstrategia(){
+  var T=totals(view.y,view.m),PT=prevTotals(),P=S.pct,E=emergInfo(),L=liqInfo(),cats=catRows(),ml=monthLabel();
+  var k=aiKey();$('stAiHint').innerHTML=k?'La respuesta la redacta Claude con el resumen de tus números del mes. Tarda cerca de un minuto.':'Para hacer consultas abiertas necesitás cargar tu clave de Anthropic en <b>Ajustes → Análisis con inteligencia artificial</b>. El resto de esta pantalla funciona sin clave.';
+  $('stAns').innerHTML=S.aiQA?'<div class="card flow"><p class="hint" style="margin:0 0 6px">Consulta del '+esc(S.aiQA.date)+': “'+esc(S.aiQA.q)+'”</p>'+mdLite(S.aiQA.text)+'</div>':'';
+  renderWhatIf();
+  if(T.inc<=0){
+    $('stScore').innerHTML='<div class="empty">Cargá tus ingresos de '+esc(ml)+' para calcular tu puntaje y armar la estrategia.</div>';
+    $('stPlan').innerHTML='<div class="steps"><div>Registrá cuánto cobrás: <b>“cobré 900 mil de sueldo”</b>.</div><div>Cargá en Cuentas cuánta plata tenés hoy en cada lugar.</div><div>Anotá tus gastos durante dos semanas: con eso ya aparecen las primeras ideas.</div></div>';
+    $('stIdeas').innerHTML='<div class="empty">Las ideas aparecen cuando haya ingresos y gastos cargados.</div>';return;
+  }
+  // ----- puntaje -----
+  var rate=T.s/T.inc,needM=conv(T.n,S.cur,'ARS',S.rate),ocioso=Math.max(0,L.liq-needM);
+  var comp=[
+    {l:'Ahorro e inversión',max:30,p:30*Math.min(1,rate/(P.s/100)),t:(rate*100).toFixed(0)+'% del ingreso (objetivo '+P.s+'%)'},
+    {l:'Vivir con menos de lo que ganás',max:25,p:T.free>=0?25:Math.max(0,25*(1+T.free/T.inc*4)),t:T.free>=0?'Te sobran '+fmt(T.free):'Te faltan '+fmt(-T.free)},
+    {l:'Fondo de emergencia',max:20,p:20*Math.min(1,E.months/S.emMonths),t:E.avgN?E.months.toFixed(1)+' de '+S.emMonths+' meses cubiertos':'Sin datos de necesidades'},
+    {l:'Peso de las necesidades',max:15,p:T.n/T.inc<=P.n/100?15:Math.max(0,15*(1-(T.n/T.inc-P.n/100)/0.25)),t:(T.n/T.inc*100).toFixed(0)+'% del ingreso (tope '+P.n+'%)'},
+    {l:'Orden de las cuentas',max:10,p:(L.neg?0:5)+(needM>0&&L.liq>needM*1.5?0:5),t:(L.neg?L.neg+' cuenta(s) en negativo':'Sin cuentas en negativo')+(needM>0&&L.liq>needM*1.5?' · pesos ociosos':'')}];
+  var score=Math.round(sum(comp,function(c){return c.p;})),lbl=score>=80?'Excelente':score>=60?'Bien encaminado':score>=40?'Hay que ordenar':'Situación crítica',col=score>=80?'var(--ok)':score>=60?'var(--accent)':score>=40?'var(--warn)':'var(--bad)';
+  $('stScore').innerHTML='<div class="score"><div class="num" style="color:'+col+'">'+score+'<small> / 100</small></div><div><div class="lbl">'+lbl+'</div><div class="hint" style="margin-top:2px">Según tus números de '+esc(ml)+'.</div></div></div>'+
+    comp.map(function(c){var pc=c.p/c.max*100;return '<div class="bar"><div class="h"><span><b>'+c.l+'</b> · '+Math.round(c.p)+'/'+c.max+'</span><span>'+esc(c.t)+'</span></div><div class="track"><div class="fill" style="width:'+pc+'%;background:'+(pc>=80?'var(--ok)':pc>=50?'var(--warn)':'var(--bad)')+'"></div></div></div>';}).join('');
+  // ----- etapa y plan -----
+  var bS=T.inc*P.s/100,gap=Math.max(0,bS-T.s),falta=Math.max(0,E.target-E.em),stage,why,steps=[];
+  if(T.free<0){stage='Etapa 1 · Ordenar';why='Este mes salió más plata de la que entró: antes de pensar en invertir hay que cerrar esa diferencia de '+fmt(-T.free)+'.';
+    steps=['Frená los gustos hasta volver a cero: hoy suman <b>'+esc(fmt(T.w))+'</b>.','No financies la diferencia con el mínimo de la tarjeta: es la deuda más cara que existe.','Revisá el gasto más grande ('+esc(cats.length?cats[0].n:'—')+') y buscá una baja concreta este mes.','Poné un tope semanal de gasto y cargá cada movimiento el mismo día.'];}
+  else if(E.months<1){stage='Etapa 2 · Armar el colchón';why='Gastás menos de lo que ganás, pero todavía no tenés ni un mes de necesidades guardado: cualquier imprevisto te obliga a endeudarte.';
+    steps=['Objetivo inmediato: un mes de necesidades'+(E.avgN?' (<b>'+esc(fmt(E.avgN))+'</b>)':'')+' en la categoría “Fondo de emergencia”.','Separá el ahorro el día que cobrás, antes de gastar'+(gap>0?': te faltan <b>'+esc(fmt(gap))+'</b> por mes para llegar al '+P.s+'%.':'.'),'Guardalo en algo líquido y separado de la cuenta de todos los días.','No inviertas a largo plazo todavía: primero el colchón.'];}
+  else if(E.months<S.emMonths){stage='Etapa 3 · Completar el fondo';why='Ya cubrís '+E.months.toFixed(1)+' meses. Falta llegar a los '+S.emMonths+' que te pusiste como objetivo.';
+    steps=['Te faltan <b>'+esc(fmt(falta))+'</b>. Al ritmo de ahorro de este mes ('+esc(fmt(T.s))+') llegás en <b>'+(T.s>0?Math.ceil(falta/T.s)+' meses':'—')+'</b>.','Mantené el fondo en instrumentos de rescate rápido; que no dependa del precio de un activo.','Podés empezar a destinar una parte chica (por ejemplo, un cuarto del ahorro) a inversión de largo plazo.','Cada aumento de ingreso: la mitad al fondo antes de subir tu nivel de gasto.'];}
+  else{stage='Etapa 4 · Hacer crecer';why='Tenés el fondo de emergencia completo y margen mensual: el foco pasa de protegerte a hacer rendir el excedente.';
+    steps=['Definí qué porcentaje de tu patrimonio querés en moneda dura y cuál en pesos, y rebalanceá una vez por trimestre.','Invertí todos los meses un monto fijo en lugar de esperar “el momento”: reduce el riesgo de entrar caro.','Diversificá por tipo de instrumento y plazo; lo que vayas a necesitar en menos de un año no va a renta variable.','Subí tu tasa de ahorro un punto por trimestre hasta donde no afecte tu calidad de vida.'];}
+  $('stPlan').innerHTML='<div class="tip" style="border-color:'+col+'"><div><b>'+stage+'</b><br>'+esc(why)+'</div></div><div class="steps">'+steps.map(function(x){return '<div>'+x+'</div>';}).join('')+'</div>'+
+    '<div class="hint">Proyección: ahorrando como este mes ('+esc(fmt(T.s))+'), en 12 meses sumás <b>'+esc(fmt(T.s*12))+'</b>. Con 5 puntos más de tasa de ahorro serían <b>'+esc(fmt((T.s+T.inc*0.05)*12))+'</b>.</div>';
+  // ----- ideas -----
+  var ideas=[],idea=function(imp,ic,ti,tx){ideas.push({imp:imp,ic:ic,ti:ti,tx:tx});},byId={};
+  monthTx(view.y,view.m).forEach(function(t){if(t.type==='gasto')byId[t.cat]=(byId[t.cat]||0)+val(t);});
+  if(gap>0)idea(gap*12,'🏦','Pagate primero','Programá una transferencia automática de <b>'+esc(fmt(gap))+'</b> el día que cobrás, hacia ahorro o inversión. Es lo que te falta para cumplir tu '+P.s+'% y, si no lo ves, no lo gastás.');
+  if(T.w>0)idea(T.w*0.15*12,'✂️','Recortá un 15% de gustos sin eliminar ninguno','Tus gustos suman <b>'+esc(fmt(T.w))+'</b>. Bajar un 15% (una salida menos, una marca más barata) libera '+esc(fmt(T.w*0.15))+' por mes.');
+  var topN=cats.filter(function(c){return c.g==='N';})[0];
+  if(topN)idea(topN.v*0.1*12,'🤝','Renegociá tu mayor gasto fijo','<b>'+esc(topN.n)+'</b> se lleva '+esc(fmt(topN.v))+' ('+(topN.v/T.inc*100).toFixed(0)+'% del ingreso). Conseguir un 10% menos —cambiar de plan, pedir bonificación, comparar proveedores— rinde más que recortar diez gastos chicos.');
+  if(byId.deudas>0)idea(byId.deudas*12*0.25,'🧾','Atacá primero la deuda más cara','Pagás <b>'+esc(fmt(byId.deudas))+'</b> por mes en deudas e impuestos. Ordená las deudas por tasa y cancelá primero la más alta: cada peso de deuda cara que cancelás rinde más que cualquier inversión.');
+  if(byId.ocio>0)idea(byId.ocio*0.5*12,'📺','Auditá suscripciones','En ocio y suscripciones van <b>'+esc(fmt(byId.ocio))+'</b> por mes. Listalas todas y cancelá las que no usaste en los últimos 30 días; rotá plataformas en lugar de pagar varias a la vez.');
+  if(byId.salidas>0)idea(byId.salidas*0.3*12,'🍳','Reemplazá uno de cada tres deliveries','Salidas y delivery suman <b>'+esc(fmt(byId.salidas))+'</b>. Cocinar una de cada tres veces mantiene el gusto y libera '+esc(fmt(byId.salidas*0.3))+' por mes.');
+  if(ocioso>0&&S.inf>0)idea(conv(ocioso*S.inf/100*12,'ARS',S.cur,S.rate),'📉','Poné a trabajar los pesos quietos','Tenés unos <b>'+esc(fmt(ocioso,'ARS'))+'</b> en pesos por encima de un mes de necesidades. Con '+S.inf+'% de inflación mensual, dejarlos sin rendimiento te cuesta cerca de '+esc(fmt(ocioso*S.inf/100,'ARS'))+' por mes de poder de compra.');
+  idea(T.inc*0.1*12,'🚀','Sumá un 10% de ingresos','Recortar tiene techo; ganar más, no. Un 10% extra (pedir ajuste, una changa, vender lo que no usás) son <b>'+esc(fmt(T.inc*0.1))+'</b> por mes. Destiná al menos la mitad directo al ahorro.');
+  if(PT.inc>0&&S.inf>0){var gI=(T.inc-PT.inc)/PT.inc*100;if(gI<S.inf)idea(T.inc*(S.inf-gI)/100*12,'📈','Tu ingreso corre detrás de la inflación','Respecto del mes anterior tu ingreso varió '+gI.toFixed(1)+'% contra una inflación estimada de '+S.inf+'%. Esa diferencia es pérdida de poder de compra: llevá el número a la próxima negociación.');}
+  var sv=sum(S.tx.filter(function(t){return t.type==='ahorro'||t.type==='inversion';}),function(t){return conv(t.amt,t.cur,'ARS',ofiRate());}),usd=0,tot=sv;
+  S.tx.forEach(function(t){if((t.type==='ahorro'||t.type==='inversion')&&t.cur==='USD')usd+=conv(t.amt,'USD','ARS',ofiRate());});
+  S.accts.forEach(function(a){var b=conv(acctBal(a),a.cur,'ARS',ofiRate());tot+=b;if(a.cur==='USD')usd+=b;});
+  if(tot>0)idea(0,'⚖️','Decidí tu mezcla de monedas','Hoy el <b>'+(usd/tot*100).toFixed(0)+'%</b> de lo que tenés registrado está en dólares y el resto en pesos. No hay un número correcto, pero conviene que sea una decisión tuya y no una casualidad: fijá un objetivo y revisalo cada tres meses.');
+  idea(0,'⏳','Regla de las 24 horas','Para cualquier compra no planificada mayor a '+esc(fmt(T.inc*0.05))+' (5% de tu ingreso), esperá un día antes de pagar. La mayoría de los impulsos no sobrevive a la espera.');
+  ideas.sort(function(a,b){return b.imp-a.imp;});
+  $('stIdeas').innerHTML=ideas.map(function(x){return '<div class="tip">'+x.ic+'<div><b>'+x.ti+'</b><br>'+x.tx+(x.imp>0?'<br><span class="imp">Impacto estimado: '+esc(fmt(x.imp))+' por año</span>':'')+'</div></div>';}).join('');
+}
+
 /* ---------- Navegación ---------- */
-$('tabs').onclick=function(e){var v=e.target.dataset.v;if(!v)return;
-  Array.prototype.forEach.call(this.children,function(b){b.classList.toggle('on',b.dataset.v===v);});
-  Array.prototype.forEach.call(document.querySelectorAll('section.view'),function(s){s.classList.toggle('on',s.id==='v-'+v);});
-  window.scrollTo(0,0);};
+function showView(v){
+  Array.prototype.forEach.call($('tabs').children,function(b){b.classList.toggle('on',b.dataset.v===v);if(b.dataset.v===v&&b.scrollIntoView)b.scrollIntoView({block:'nearest',inline:'center'});});
+  Array.prototype.forEach.call(document.querySelectorAll('section.view'),function(x){x.classList.toggle('on',x.id==='v-'+v);});
+  window.scrollTo(0,0);
+}
+$('tabs').onclick=function(e){var v=e.target.dataset.v;if(v)showView(v);};
+$('goSt').onclick=function(){showView('estrategia');};
 $('curPill').onclick=function(e){var c=e.target.dataset.cur;if(c){S.cur=c;save();render();}};
 $('themeBtn').onclick=function(){S.theme=S.theme==='dark'?'light':'dark';save();applyTheme();};
 $('mPrev').onclick=function(){view.m--;if(view.m<0){view.m=11;view.y--;}render();};
@@ -1180,7 +1305,7 @@ function syncInputs(){
 function render(){
   var ml=new Date(view.y,view.m,1).toLocaleDateString('es-AR',{month:'long',year:'numeric'});$('mLabel').textContent=ml.charAt(0).toUpperCase()+ml.slice(1);
   Array.prototype.forEach.call($('curPill').children,function(b){b.classList.toggle('on',b.dataset.cur===S.cur);});
-  renderInicio();renderMovs();renderCalc();renderMetas();renderCats();renderCuentas();renderReport();
+  renderInicio();renderMovs();renderCalc();renderMetas();renderCats();renderCuentas();renderReport();renderEstrategia();
 }
 applyTheme();syncInputs();$('cCur').value=S.cur;aiHint();render();
 if(!S.rateAt||!S.ofiAt||Date.now()-Math.min(S.rateAt,S.ofiAt)>6*3600*1000)fetchRate(true);
