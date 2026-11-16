@@ -187,6 +187,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 <!-- INICIO: ordenado de lo más importante a lo menos -->
 <section class="view on" id="v-inicio">
   <div class="card"><h3>💼 Mi plata hoy</h3><div id="homeAccts"></div></div>
+  <div class="card" style="margin-top:14px"><h3>🏠 Con cuánto vivo por mes</h3><div id="homeLive"></div></div>
   <div class="grid kpis" id="kpis" style="margin-top:14px"></div>
   <div class="card" style="margin-top:14px"><h3>🤖 Tu asistente</h3><div class="tips" id="tips"></div>
     <div class="actions"><button class="btn ghost" id="goSt">🧠 Ver ideas estratégicas para mejorar</button></div></div>
@@ -516,6 +517,18 @@ function ofiRate(){return S.ofi>0?S.ofi:S.rate;}   // dólar oficial (si todaví
 function availOfi(){var o=ofiRate(),ars=0;S.accts.forEach(function(a){ars+=conv(acctBal(a),a.cur,'ARS',o);});return{ars:ars,usd:ars/o,rate:o};}
 function ofiNote(){return 'Dólar oficial: $ '+Number(ofiRate()).toLocaleString('es-AR')+(S.ofi>0?(S.ofiAt?' · actualizado el '+new Date(S.ofiAt).toLocaleString('es-AR'):' · cargado a mano'):' · todavía sin actualizar: se usa la cotización de Ajustes');}
 function acctsSorted(){var o=ofiRate();return S.accts.slice().sort(function(a,b){return conv(acctBal(b),b.cur,'ARS',o)-conv(acctBal(a),a.cur,'ARS',o);});}   // de mayor a menor saldo
+function livingInfo(){   // costo de vida: promedio de hasta 3 meses completos; si no hay, estimación con el mes en curso
+  var ms=[],y=now.getFullYear(),m=now.getMonth()-1,i;if(m<0){m=11;y--;}
+  for(i=0;i<6&&ms.length<3;i++){var T=totals(y,m);if(T.exp>0)ms.push({l:String(m+1).padStart(2,'0')+'/'+String(y).slice(2),T:T});m--;if(m<0){m=11;y--;}}
+  var r={n:ms.length,labels:ms.map(function(o){return o.l;}).reverse(),est:false,exp:0,nec:0,gus:0,inc:0};
+  if(ms.length){ms.forEach(function(o){r.exp+=o.T.exp;r.nec+=o.T.n;r.gus+=o.T.w;r.inc+=o.T.inc;});r.exp/=ms.length;r.nec/=ms.length;r.gus/=ms.length;r.inc/=ms.length;}
+  else{var C=totals(now.getFullYear(),now.getMonth()),day=new Date().getDate(),dim=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(),f=day>=5?dim/day:1;
+    r.est=true;r.proj=day>=5;r.exp=C.exp*f;r.nec=C.n*f;r.gus=C.w*f;r.inc=C.inc;}
+  var tot=Math.max(0,acctTotals().tot);
+  r.tot=tot;r.meses=r.exp>0?tot/r.exp:null;r.mesesMin=r.nec>0?tot/r.nec:null;
+  return r;
+}
+function mesesTxt(v){return v==null?'—':v>=24?'más de 2 años':v>=1?v.toFixed(1).replace('.',',')+' meses':Math.round(v*30)+' días';}
 function acctLbl(t){var a=acctById(t.acct),b=t.type==='transfer'?acctById(t.to):null;return (a?a.n:'—')+(b?' → '+b.n:'');}
 function dfltCat(l){for(var i=0;i<l.length;i++)if(!(l[i].k&&l[i].k.length))return l[i];return l[l.length-1];}
 migrate();
@@ -707,6 +720,14 @@ function renderInicio(){
     '<div class="card kpi"><small>Ahorro + inversión</small><div class="v" style="color:var(--accent)">'+esc(fmt(T.s))+'</div><div class="s">tasa de ahorro '+rate.toFixed(0)+'%</div></div>';
   // torta por categoría
   var A=acctTotals();
+  var Lv=livingInfo(),alt=function(v){return S.cur==='ARS'?fmt(v/ofiRate(),'USD'):fmt(v*ofiRate(),'ARS');};
+  $('homeLive').innerHTML=Lv.exp>0?
+    '<div class="split" style="margin-top:0"><div style="border-color:var(--bad)"><small>Costo de vida mensual</small><b>'+esc(fmt(Lv.exp))+'</b><p>≈ '+esc(alt(Lv.exp))+' · '+esc(fmt(Lv.exp/30))+' por día'+(Lv.inc>0?'<br>'+(Lv.exp/Lv.inc*100).toFixed(0)+'% de tu ingreso':'')+'</p></div>'+
+    '<div style="border-color:var(--warn)"><small>Mínimo para vivir</small><b>'+esc(fmt(Lv.nec))+'</b><p>Solo necesidades.<br>Gustos: '+esc(fmt(Lv.gus))+'</p></div>'+
+    '<div style="border-color:var(--ok)"><small>Tu plata alcanza para</small><b>'+mesesTxt(Lv.meses)+'</b><p>Sin ingresos, con tu disponible de hoy.<br>Gastando solo lo necesario: '+mesesTxt(Lv.mesesMin)+'</p></div></div>'+
+    '<div class="hint">'+(Lv.est?(Lv.proj?'Estimación proyectando el mes en curso: todavía no hay meses completos cargados.':'Dato parcial: es lo gastado hasta hoy en el mes en curso. Con más días cargados se vuelve una estimación mensual.')
+      :'Promedio de '+(Lv.n===1?'tu último mes completo':'tus últimos '+Lv.n+' meses completos')+' con gastos ('+esc(Lv.labels.join(', '))+'). No incluye lo que apartás a ahorro e inversión.')+'</div>'
+    :'<div class="empty">Cargá tus gastos y acá vas a ver cuánto necesitás por mes para vivir y para cuánto tiempo te alcanza tu plata.</div>';
   var O=availOfi();
   $('homeAccts').innerHTML='<div class="split" style="margin-top:0"><div style="border-color:var(--ok)"><small>Disponible en pesos</small><b>'+esc(fmt(O.ars,'ARS'))+'</b></div>'+
     '<div style="border-color:var(--accent)"><small>Disponible en dólares</small><b>'+esc(fmt(O.usd,'USD'))+'</b></div>'+
@@ -1047,8 +1068,10 @@ function renderReport(){
   var dim=new Date(view.y,view.m+1,0).getDate(),day=isCur?new Date().getDate():dim,maxT=null,byDay={};
   g.forEach(function(t){if(!maxT||val(t)>val(maxT))maxT=t;byDay[t.date]=(byDay[t.date]||0)+val(t);});
   var topDay=Object.keys(byDay).sort(function(a,b){return byDay[b]-byDay[a];})[0];
-  var st=function(l,v){return '<tr><td>'+l+'</td><td class="r">'+v+'</td></tr>';},pc=function(v){return T.inc>0?(v/T.inc*100).toFixed(1)+'%':'—';};
+  var Lv=livingInfo(),st=function(l,v){return '<tr><td>'+l+'</td><td class="r">'+v+'</td></tr>';},pc=function(v){return T.inc>0?(v/T.inc*100).toFixed(1)+'%':'—';};
   h+='<div class="card"><h3>📈 Estadísticas del mes</h3><div class="tblwrap"><table class="tbl"><tr><th>Indicador</th><th class="r">Valor</th></tr>'+
+    st('Costo de vida mensual'+(Lv.est?' (estimado)':' (promedio '+Lv.n+(Lv.n===1?' mes':' meses')+')'),Lv.exp>0?esc(fmt(Lv.exp)):'—')+st('Mínimo para vivir (solo necesidades)',Lv.nec>0?esc(fmt(Lv.nec)):'—')+
+    st('Tu disponible alcanza para',mesesTxt(Lv.meses)+(Lv.mesesMin!=null?' · '+mesesTxt(Lv.mesesMin)+' gastando solo lo necesario':''))+
     st('Gasto promedio por día',esc(fmt(T.exp/day)))+st('Cantidad de gastos',g.length)+st('Gasto promedio por compra',g.length?esc(fmt(T.exp/g.length)):'—')+
     st('Gasto más alto',maxT?esc((maxT.desc||catOf(maxT).n)+' · '+fmt(val(maxT))):'—')+
     st('Día de mayor gasto',topDay?esc(topDay.split('-').reverse().join('/')+' · '+fmt(byDay[topDay])):'—')+
@@ -1165,6 +1188,7 @@ function aiData(){
     gastosPorCategoria:catRows().map(function(c){return{categoria:c.n,tipo:c.g==='N'?'necesidad':'gusto',monto:r2n(c.v)};}),
     cuentas:S.accts.map(function(a){return{nombre:a.n,tipo:a.k,moneda:a.cur,saldo:r2n(acctBal(a))};}),
     acumulado:{ahorro:r2n(sum(sav,valNow)),inversion:r2n(sum(inv,valNow)),fondoEmergencia:r2n(sum(sav.filter(function(t){return t.cat==='emergencia';}),valNow)),mesesObjetivoFondo:S.emMonths},
+    costoDeVida:(function(){var v=livingInfo();return{mensual:r2n(v.exp),soloNecesidades:r2n(v.nec),esEstimacionDelMesEnCurso:v.est,mesesQueAlcanzaElDisponible:v.meses==null?null:r2n(v.meses)};})(),
     metas:S.goals.map(function(g){return{nombre:g.name,objetivo:g.amt,moneda:g.cur};}),cantidadMovimientos:monthTx(view.y,view.m).length};
 }
 var aiPend=null;   // {btn,label,cb} de la consulta en curso
