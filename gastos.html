@@ -153,9 +153,80 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 .rep h4{margin:14px 0 6px;font-size:.98rem}
 .rep p,.rep li{font-size:.9rem;line-height:1.5}
 .rep ul{padding-left:20px;margin:6px 0}
+/* ===== Rediseño: una columna, navegación inferior, menos ruido ===== */
+[hidden]{display:none!important}
+body{overflow-x:clip}
+.list{grid-template-columns:minmax(0,1fr)}
+.tx{cursor:pointer;min-width:0}
+.tx .a{flex:none}
+.acct .n b,.acct .n small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toast{top:calc(64px + env(safe-area-inset-top));bottom:auto!important;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+:root{--bg:#0b0f17;--surface:#131926;--surface2:#1b2333;--line:#212a3b;--text:#f1f4fa;--muted:#8a95ab;--accent:#5b8cff;--accent2:#8b6cff;--radius:20px;--shadow:none}
+:root[data-theme="light"]{--bg:#f4f5f9;--surface:#ffffff;--surface2:#f0f2f7;--line:#e6e9f1;--text:#141a26;--muted:#667189;--shadow:0 1px 2px rgba(20,30,60,.04),0 8px 24px rgba(20,30,60,.05)}
+body{padding-bottom:calc(96px + env(safe-area-inset-bottom));font-size:15px;line-height:1.42}
+.wrap{max-width:720px}
+header{border-bottom:0}
+.top{padding:14px 0 10px;flex-wrap:nowrap;gap:8px}
+#vTitle{margin-right:auto;min-width:0;display:flex;align-items:center;gap:4px;font-size:1.12rem;font-weight:800;letter-spacing:-.02em}
+#vName{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#backBtn{width:34px;height:34px;border-radius:50%;background:var(--surface2);font-size:1.3rem;line-height:1;flex:none;margin-right:4px}
+.month{gap:2px;font-size:.84rem;flex:none}
+.month b{min-width:0;padding:0 4px;white-space:nowrap}
+.month button{width:30px;height:30px;border-radius:50%;border:0}
+.pill{border:0;flex:none}
+.pill button{padding:6px 9px;font-size:.76rem}
+main{padding-top:6px}
+.grid{gap:12px}
+.two{grid-template-columns:1fr}
+.kpis{grid-template-columns:repeat(2,1fr)}
+.card{padding:18px;border-radius:var(--radius)}
+.card h3{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:14px}
+.kpi{padding:15px 16px}
+.kpi small{font-size:.7rem;letter-spacing:.06em}
+.kpi .v{font-size:1.28rem}
+.btn{background:var(--accent);border-radius:14px;padding:13px 16px}
+.btn.ghost{border:0;background:var(--surface2)}
+input,select,textarea{border-radius:14px;padding:13px 14px;border-color:transparent}
+label{margin:14px 0 6px}
+.hint{line-height:1.5}
+.tip{border-left-width:3px;border-radius:16px;padding:14px}
+.split{gap:8px}
+.split div{border-top:0;border-radius:16px;padding:14px}
+.split b{font-size:1.15rem}
+.tx,.acct,.prow,.catrow,.goal{border-radius:16px;padding:12px 14px}
+.tx .ic{border-radius:50%}
+.tx .x,.acct button,.prow button,.catrow button{opacity:.75}
+.chips button{border:0;padding:8px 14px}
+.sec{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:22px 4px 10px}
+.hero{background:linear-gradient(135deg,#3d6dff,#7b5cff);color:#fff;border-radius:24px;padding:22px 22px 18px;box-shadow:0 14px 34px rgba(70,100,255,.28)}
+.hero small{display:block;opacity:.85;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.hero .big{font-size:2.35rem;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin:6px 0 4px;word-break:break-word}
+.hero .sub{opacity:.92;font-size:1rem;font-weight:600}
+.hero .chips2{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.hero .chips2 span{background:rgba(255,255,255,.17);border-radius:99px;padding:6px 12px;font-size:.8rem;font-weight:600}
+.hero .note{opacity:.72;font-size:.72rem;margin-top:12px}
+.menu{display:grid;gap:10px}
+.menu button{display:flex;align-items:center;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:18px;text-align:left;width:100%;box-shadow:var(--shadow)}
+.menu .mi{width:44px;height:44px;border-radius:14px;background:var(--surface2);display:grid;place-items:center;font-size:1.25rem;flex:none}
+.menu b{display:block;font-size:.98rem}
+.menu small{color:var(--muted);font-size:.8rem}
+.menu i{margin-left:auto;font-style:normal;color:var(--muted);font-size:1.4rem}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:25;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom));display:flex;justify-content:center}
+.bnav .in{display:grid;grid-template-columns:repeat(5,1fr);width:100%;max-width:520px;align-items:end}
+.bnav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;font-size:.68rem;font-weight:600;color:var(--muted)}
+.bnav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.bnav span{pointer-events:none}
+.bnav button.on{color:var(--accent)}
+.bnav .add{justify-self:center;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;margin-top:-24px;box-shadow:0 8px 22px rgba(91,140,255,.45);justify-content:center;padding:0}
+.bnav .add svg{width:28px;height:28px;stroke-width:2.2}
+.fab{right:16px;bottom:calc(88px + env(safe-area-inset-bottom))}
+.fab button{width:56px;height:56px;font-size:1.45rem;background:var(--surface);border:1px solid var(--line);box-shadow:0 8px 22px rgba(0,0,0,.28)}
+.toast{bottom:calc(160px + env(safe-area-inset-bottom))}
+.sheet{padding:22px 20px calc(22px + env(safe-area-inset-bottom))}
+.sheet h2{font-size:1.2rem;margin-bottom:10px}
 @media print{
   :root,:root[data-theme="light"]{--bg:#fff;--surface:#fff;--surface2:#f3f5fb;--line:#d5dbea;--text:#111;--muted:#555;--shadow:none}
-  header,.fab,.toast,.modal,.noprint{display:none!important}
+  header,.fab,.bnav,.toast,.modal,.noprint{display:none!important}
   section.view{display:none!important}
   section#v-reporte{display:block!important}
   html,body{background:#fff}
@@ -172,64 +243,55 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 <header>
   <div class="wrap">
     <div class="top">
-      <div class="brand">💸 <span>Mis Gastos</span></div>
+      <div id="vTitle"><button id="backBtn" hidden aria-label="Volver">‹</button><span id="vName">Mis Gastos</span></div>
       <div class="month"><button id="mPrev" aria-label="Mes anterior">‹</button><b id="mLabel"></b><button id="mNext" aria-label="Mes siguiente">›</button></div>
-      <div class="pill" id="curPill"><button data-cur="ARS">$ ARS</button><button data-cur="USD">US$</button></div>
-      <button class="iconbtn" id="themeBtn" title="Tema claro/oscuro">🌓</button>
+      <div class="pill" id="curPill"><button data-cur="ARS">ARS</button><button data-cur="USD">USD</button></div>
     </div>
-    <nav class="tabs" id="tabs">
-      <button data-v="inicio" class="on">🏠 Inicio</button>
-      <button data-v="estrategia">🧠 Estrategia</button>
-      <button data-v="movs">📋 Movimientos</button>
-      <button data-v="cuentas">💼 Cuentas</button>
-      <button data-v="plan">📅 Planificación</button>
-      <button data-v="reporte">📄 Reportes</button>
-      <button data-v="metas">🎯 Ahorro e inversión</button>
-      <button data-v="calc">🧮 50/30/20</button>
-      <button data-v="ajustes">⚙️ Ajustes</button>
-    </nav>
   </div>
 </header>
 
 <main class="wrap">
-<!-- INICIO: ordenado de lo más importante a lo menos -->
+<!-- INICIO -->
 <section class="view on" id="v-inicio">
-  <div class="card"><h3>💼 Mi plata hoy</h3><div id="homeAccts"></div></div>
-  <div class="card" style="margin-top:14px"><h3>🏠 Con cuánto vivo por mes</h3><div id="homeLive"></div></div>
-  <div class="grid kpis" id="kpis" style="margin-top:14px"></div>
-  <div class="card" style="margin-top:14px"><h3>🤖 Tu asistente</h3><div class="tips" id="tips"></div>
-    <div class="actions"><button class="btn ghost" id="goSt">🧠 Ver ideas estratégicas para mejorar</button></div></div>
-  <div class="card" style="margin-top:14px"><h3>📊 Tu mes vs. regla <span id="ruleLbl"></span></h3><div id="ruleBars"></div></div>
-  <div class="grid two" style="margin-top:14px">
-    <div class="card"><h3>🥧 Gastos por categoría</h3><div class="pie" id="pieCat"></div></div>
-    <div class="card"><h3>🥧 A dónde va tu ingreso</h3><div class="pie" id="pieDist"></div></div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <h3>⚡ Carga rápida y exportación</h3>
-    <div class="quick">
-      <input id="quickTxt" placeholder='Decí o escribí: "gasté 15 mil en supermercado"' autocomplete="off">
-      <button class="btn" id="quickGo">Agregar</button>
-    </div>
-    <div class="hint">🎙️ También podés tocar el micrófono y hablar natural: <i>“cobré 900 mil de sueldo”</i>, <i>“gasté 8500 en nafta con mercado pago”</i>, <i>“ahorré 100 dólares”</i>, <i>“pasé 50 mil de banco a efectivo”</i>.</div>
-    <div class="actions"><button class="btn" id="pdfHome">📄 Exportar a PDF</button><button class="btn ghost" id="xlsHome">📊 Exportar a Excel</button></div>
+  <div class="hero" id="homeAccts"></div>
+  <div class="card" style="margin-top:14px"><h3>Con cuánto vivo por mes</h3><div id="homeLive"></div></div>
+  <div class="sec">Este mes</div>
+  <div class="grid kpis" id="kpis"></div>
+  <div class="card" style="margin-top:14px"><h3>Tu asistente</h3><div class="tips" id="tips"></div>
+    <div class="actions"><button class="btn ghost" id="tipsMore" hidden></button><button class="btn ghost" id="goSt">Ideas estratégicas</button></div></div>
+  <div class="card" style="margin-top:14px"><h3>Tu mes vs. regla <span id="ruleLbl"></span></h3><div id="ruleBars"></div></div>
+  <div class="card" style="margin-top:14px"><h3>Gastos por categoría</h3><div class="pie" id="pieCat"></div></div>
+  <div class="card" style="margin-top:14px"><h3>A dónde va tu ingreso</h3><div class="pie" id="pieDist"></div></div>
+  <div class="actions"><button class="btn ghost" id="pdfHome">Exportar PDF</button><button class="btn ghost" id="xlsHome">Exportar Excel</button></div>
+</section>
+
+<!-- MÁS -->
+<section class="view" id="v-mas">
+  <div class="menu" id="menu">
+    <button data-go="estrategia"><span class="mi">🧠</span><div><b>Estrategia</b><small>Puntaje, plan e ideas para mejorar</small></div><i>›</i></button>
+    <button data-go="plan"><span class="mi">📅</span><div><b>Planificación</b><small>Gastos fijos, cuotas, topes y deudas</small></div><i>›</i></button>
+    <button data-go="metas"><span class="mi">🎯</span><div><b>Ahorro e inversión</b><small>Fondo de emergencia, metas y cartera</small></div><i>›</i></button>
+    <button data-go="reporte"><span class="mi">📄</span><div><b>Reportes</b><small>PDF, Excel y análisis con IA</small></div><i>›</i></button>
+    <button data-go="calc"><span class="mi">🧮</span><div><b>Calculadoras</b><small>50/30/20, interés compuesto e inflación</small></div><i>›</i></button>
+    <button data-go="ajustes"><span class="mi">⚙️</span><div><b>Ajustes</b><small>Dólar, categorías, respaldo y apariencia</small></div><i>›</i></button>
   </div>
 </section>
 
 <!-- ESTRATEGIA -->
 <section class="view" id="v-estrategia">
-  <div class="card"><h3>🧠 Tu salud financiera</h3><div id="stScore"></div></div>
-  <div class="card" style="margin-top:14px"><h3>🧭 Tu etapa y el plan para avanzar</h3><div id="stPlan"></div></div>
-  <div class="card" style="margin-top:14px"><h3>💡 Ideas estratégicas, de mayor a menor impacto</h3><div class="tips" id="stIdeas"></div>
+  <div class="card"><h3>Tu salud financiera</h3><div id="stScore"></div></div>
+  <div class="card" style="margin-top:14px"><h3>Tu etapa y el plan para avanzar</h3><div id="stPlan"></div></div>
+  <div class="card" style="margin-top:14px"><h3>Ideas estratégicas, de mayor a menor impacto</h3><div class="tips" id="stIdeas"></div>
     <div class="hint">Los impactos son estimaciones a partir de tus números del mes que estás viendo, para comparar ideas entre sí. Es información general, no asesoramiento financiero profesional.</div></div>
   <div class="card" style="margin-top:14px">
-    <h3>🎛️ ¿Qué pasa si…?</h3>
+    <h3>¿Qué pasa si…?</h3>
     <label>Recorto mis gustos un <b id="wCutV">10</b>%</label><input type="range" id="wCut" min="0" max="60" step="5" value="10">
     <label>Bajo mis necesidades un <b id="nCutV">0</b>%</label><input type="range" id="nCut" min="0" max="30" step="5" value="0">
     <label>Aumento mis ingresos un <b id="iUpV">0</b>%</label><input type="range" id="iUp" min="0" max="60" step="5" value="0">
     <div class="split" id="stWhat"></div>
   </div>
   <div class="card" style="margin-top:14px">
-    <h3>💬 Consultale a la IA</h3>
+    <h3>Consultale a la IA</h3>
     <textarea id="stQ" placeholder="Ej: ¿Cómo llego a ahorrar el 25% sin dejar de salir? ¿Me conviene cancelar la deuda de la tarjeta o seguir ahorrando?"></textarea>
     <div class="actions"><button class="btn" id="stAsk">🤖 Preguntar</button></div>
     <div class="hint" id="stAiHint"></div>
@@ -245,6 +307,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
       <button data-f="ingreso">Ingresos</button><button data-f="ahorro">Ahorro</button><button data-f="inversion">Inversión</button>
     </div>
     <input id="fSearch" placeholder="Buscar…" style="margin-bottom:12px">
+    <div class="hint" style="margin:0 0 10px">Tocá un movimiento para editarlo o eliminarlo.</div>
     <div class="list" id="txList"></div>
   </div>
 </section>
@@ -252,7 +315,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 <!-- CALCULADORA -->
 <section class="view" id="v-calc">
   <div class="card">
-    <h3>🧮 Calculadora 50 / 30 / 20</h3>
+    <h3>Calculadora 50 / 30 / 20</h3>
     <div class="row">
       <div><label>Ingreso mensual neto</label><input id="cInc" type="number" inputmode="decimal" placeholder="Ej: 1200000"></div>
       <div><label>Moneda</label><select id="cCur"><option value="ARS">Pesos (ARS)</option><option value="USD">Dólares (USD)</option></select></div>
@@ -271,7 +334,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
     <div class="hint">Los porcentajes que definas acá son los que usa el asistente para decirte cuánto podés gastar.</div>
   </div>
   <div class="card" style="margin-top:14px">
-    <h3>📈 Simulador de interés compuesto</h3>
+    <h3>Simulador de interés compuesto</h3>
     <div class="row">
       <div><label>Capital inicial</label><input id="sIni" type="number" inputmode="decimal" value="0"></div>
       <div><label>Aporte mensual</label><input id="sApo" type="number" inputmode="decimal" placeholder="Tu 20%"></div>
@@ -284,7 +347,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
     <div class="hint">Es una proyección matemática, no una promesa de rendimiento. Para pesos, usá una tasa <b>real</b> (rendimiento menos inflación) para ver poder de compra.</div>
   </div>
   <div class="card" style="margin-top:14px">
-    <h3>🔥 Inflación: cuánto pierden tus pesos quietos</h3>
+    <h3>Inflación: cuánto pierden tus pesos quietos</h3>
     <div class="row">
       <div><label>Inflación mensual estimada (%)</label><input id="infM" type="number" inputmode="decimal" step="0.1"></div>
       <div><label>Monto en pesos</label><input id="infAmt" type="number" inputmode="decimal" placeholder="Ej: 500000"></div>
@@ -297,11 +360,11 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 <section class="view" id="v-metas">
   <div class="grid kpis" id="patKpis"></div>
   <div class="grid two" style="margin-top:14px">
-    <div class="card"><h3>🛟 Fondo de emergencia</h3><div id="emerg"></div></div>
-    <div class="card"><h3>🥧 Cartera de ahorro e inversión</h3><div class="pie" id="piePat"></div></div>
+    <div class="card"><h3>Fondo de emergencia</h3><div id="emerg"></div></div>
+    <div class="card"><h3>Cartera de ahorro e inversión</h3><div class="pie" id="piePat"></div></div>
   </div>
   <div class="card" style="margin-top:14px">
-    <h3>🎯 Metas de ahorro</h3>
+    <h3>Metas de ahorro</h3>
     <div class="list" id="goals"></div>
     <div class="row3" style="margin-top:12px">
       <div><label>Nombre</label><input id="gName" placeholder="Ej: Vacaciones"></div>
@@ -312,7 +375,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
     <div class="hint">Para sumar a una meta, registrá un movimiento de tipo <b>Ahorro</b> y elegí la meta.</div>
   </div>
   <div class="card" style="margin-top:14px">
-    <h3>🇦🇷 Orden sugerido para hacer crecer tu plata</h3>
+    <h3>Orden sugerido para hacer crecer tu plata</h3>
     <div class="tips">
       <div class="tip">1️⃣ <div><b>Deudas caras primero.</b> El financiamiento de tarjeta y los préstamos personales suelen costar más de lo que rinde cualquier inversión.</div></div>
       <div class="tip">2️⃣ <div><b>Fondo de emergencia</b> de 3 a 6 meses de necesidades, en algo líquido (billetera/FCI money market con rescate inmediato o dólares).</div></div>
@@ -327,13 +390,13 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 <section class="view" id="v-cuentas">
   <div class="grid kpis" id="acctKpis"></div>
   <div class="grid two" style="margin-top:14px">
-    <div class="card"><h3>💼 Mis cuentas y billeteras</h3><div class="list" id="acctList"></div>
+    <div class="card"><h3>Mis cuentas y billeteras</h3><div class="list" id="acctList"></div>
       <div class="actions"><button class="btn" id="trBtn">🔁 Transferir entre cuentas</button></div>
-      <div class="hint">⭐ marca la cuenta que se usa por defecto al cargar un movimiento.</div></div>
-    <div class="card"><h3>🥧 Dónde está tu plata</h3><div class="pie" id="pieAcct"></div></div>
+      <div class="hint">Tocá ✏️ para corregir el saldo, elegir la cuenta por defecto (⭐) o eliminarla.</div></div>
+    <div class="card"><h3>Dónde está tu plata</h3><div class="pie" id="pieAcct"></div></div>
   </div>
   <div class="card" style="margin-top:14px">
-    <h3 id="aFormTitle">➕ Nueva cuenta o billetera</h3>
+    <h3 id="aFormTitle">Nueva cuenta o billetera</h3>
     <div class="row3">
       <div><label>Ícono (emoji)</label><input id="aEmoji" maxlength="8" placeholder="👛"></div>
       <div><label>Nombre</label><input id="aName" placeholder="Ej: Ualá, Brubank, Caja de ahorro"></div>
@@ -344,6 +407,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
       <div><label>Saldo actual</label><input id="aBal" type="number" inputmode="decimal" step="any" placeholder="0"></div>
     </div>
     <div class="actions"><button class="btn ghost" id="aCancel" hidden>Cancelar</button><button class="btn" id="aSave">Agregar cuenta</button></div>
+    <div class="actions" id="aExtra" hidden><button class="btn ghost" id="aDef">⭐ Usar por defecto</button><button class="btn ghost" id="aDel" style="color:var(--bad)">Eliminar cuenta</button></div>
     <div class="hint">Cargá cuánta plata tenés hoy en cada lugar. Desde ahí, cada gasto, ingreso o transferencia actualiza el saldo solo. Si un saldo no coincide con la realidad, editá la cuenta y corregí el “Saldo actual”. En una <b>tarjeta de crédito</b>, el saldo es lo que debés: no cuenta como plata disponible, cada compra la aumenta y la pagás con una transferencia desde tu banco hacia la tarjeta.</div>
   </div>
 </section>
@@ -351,12 +415,12 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 <!-- PLANIFICACIÓN -->
 <section class="view" id="v-plan">
   <div class="grid kpis" id="planKpis"></div>
-  <div class="card" style="margin-top:14px"><h3>📅 Compromisos de los próximos 6 meses</h3><div id="planNext"></div></div>
-  <div class="card" style="margin-top:14px"><h3>🎯 Tope de gasto por categoría</h3><div class="list" id="budList"></div>
+  <div class="card" style="margin-top:14px"><h3>Compromisos de los próximos 6 meses</h3><div id="planNext"></div></div>
+  <div class="card" style="margin-top:14px"><h3>Tope de gasto por categoría</h3><div class="list" id="budList"></div>
     <div class="hint">Escribí cuánto querés gastar como máximo por mes en cada categoría. El asistente te avisa al llegar al 80% y si te pasás. Dejalo vacío para no poner tope.</div></div>
-  <div class="card" style="margin-top:14px"><h3>🔁 Gastos fijos y cuotas</h3><div class="list" id="recList"></div>
+  <div class="card" style="margin-top:14px"><h3>Gastos fijos y cuotas</h3><div class="list" id="recList"></div>
     <div class="hint">Para agregar uno, cargá el movimiento como siempre y marcá <b>“Repetir todos los meses”</b> o indicá la <b>cantidad de cuotas</b>. También por voz: <i>“gasté 300 mil en alquiler todos los meses”</i>, <i>“gasté 120 mil en zapatillas en 6 cuotas”</i>. La app los registra sola el día que corresponde.</div></div>
-  <div class="card" style="margin-top:14px"><h3>🤝 Deudas y préstamos</h3><div class="list" id="debtList"></div>
+  <div class="card" style="margin-top:14px"><h3>Deudas y préstamos</h3><div class="list" id="debtList"></div>
     <div class="row3" style="margin-top:12px">
       <div><label>Con quién</label><input id="dName" placeholder="Ej: Préstamo banco, Juan"></div>
       <div><label>Monto pendiente</label><input id="dAmt" type="number" inputmode="decimal" step="any"></div>
@@ -373,7 +437,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 <!-- REPORTES -->
 <section class="view" id="v-reporte">
   <div class="card noprint" style="margin-bottom:14px">
-    <h3>📤 Exportar el mes que estás viendo</h3>
+    <h3>Exportar el mes que estás viendo</h3>
     <div class="actions" style="flex-wrap:wrap;margin-top:0">
       <button class="btn" id="expPdf">📄 PDF</button>
       <button class="btn" id="expXlsx">📊 Excel</button>
@@ -387,8 +451,9 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 
 <!-- AJUSTES -->
 <section class="view" id="v-ajustes">
+  <div class="card" style="margin-bottom:14px"><h3>Apariencia</h3><div class="actions" style="margin-top:0"><button class="btn ghost" id="themeBtn">Cambiar entre tema claro y oscuro</button></div></div>
   <div class="card">
-    <h3>💵 Cotización del dólar</h3>
+    <h3>Cotización del dólar</h3>
     <div class="row">
       <div><label>Tipo de cambio</label><select id="rType">
         <option value="oficial">Oficial</option><option value="blue">Blue</option><option value="bolsa">MEP (bolsa)</option>
@@ -400,17 +465,17 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
     <div class="hint" id="rInfo"></div>
   </div>
   <div class="card" style="margin-top:14px">
-    <h3>🛟 Fondo de emergencia</h3>
+    <h3>Fondo de emergencia</h3>
     <label>Meses de necesidades a cubrir</label><input id="eMonths" type="number" min="1" max="24">
   </div>
   <div class="card" style="margin-top:14px">
-    <h3>🤖 Análisis con inteligencia artificial</h3>
+    <h3>Análisis con inteligencia artificial</h3>
     <label>Clave de API de Anthropic (opcional)</label><input id="aiKey" type="password" autocomplete="off" placeholder="sk-ant-...">
     <div class="actions"><button class="btn ghost" id="aiKeyDel">Borrar clave</button><button class="btn" id="aiKeySave">Guardar clave</button></div>
     <div class="hint">Con una clave propia, el botón “Generar análisis con IA” de Reportes le pide a Claude un informe personalizado. La clave se guarda solo en este dispositivo y no se incluye en los respaldos. Al generar el informe se envía a Anthropic un resumen de tus números del mes (totales, categorías y saldos), sin tu nombre. El uso de la API se cobra en tu cuenta de Anthropic. Sin clave, el reporte igual incluye el análisis automático de la app.</div>
   </div>
   <div class="card" style="margin-top:14px">
-    <h3>🏷️ Categorías</h3>
+    <h3>Categorías</h3>
     <div class="chips" id="cTypeChips">
       <button data-ct="gasto" class="on">Gastos</button><button data-ct="ingreso">Ingresos</button>
       <button data-ct="ahorro">Ahorro</button><button data-ct="inversion">Inversión</button>
@@ -430,7 +495,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
     <div class="hint">Tocá ✏️ para editar o 🗑️ para eliminar. Las palabras clave hacen que la voz reconozca la categoría: si decís “gasté 20 mil en veterinaria”, va a Mascotas. Al eliminar una categoría, sus movimientos pasan a “Otros”.</div>
   </div>
   <div class="card" style="margin-top:14px">
-    <h3>💾 Tus datos</h3>
+    <h3>Tus datos</h3>
     <div class="hint" style="margin:0 0 12px">Todo se guarda solo en este dispositivo (localStorage). Hacé un respaldo cada tanto.</div>
     <div class="actions" style="flex-wrap:wrap">
       <button class="btn ghost" id="expJson">Respaldo (JSON)</button>
@@ -445,14 +510,19 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 </section>
 </main>
 
-<div class="fab">
-  <button class="small" id="addBtn" aria-label="Agregar manualmente">＋</button>
-  <button id="micBtn" aria-label="Cargar por voz">🎙️</button>
-</div>
+<div class="fab"><button id="micBtn" aria-label="Cargar por voz">🎙️</button></div>
+<nav class="bnav" id="bnav"><div class="in">
+  <button data-v="inicio" class="on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg><span>Inicio</span></button>
+  <button data-v="movs"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg><span>Movimientos</span></button>
+  <button class="add" id="addBtn" aria-label="Agregar movimiento"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button data-v="cuentas"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/></svg><span>Cuentas</span></button>
+  <button data-v="mas"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg><span>Más</span></button>
+</div></nav>
 
 <div class="modal" id="modal">
   <div class="sheet">
     <h2 id="mTitle">Nuevo movimiento</h2>
+    <div class="quick" id="mQuickBox"><input id="quickTxt" placeholder='En una frase: "gasté 15 mil en super"' autocomplete="off"><button class="btn ghost" id="quickGo">Completar</button></div>
     <div class="heard" id="mHeard" hidden></div>
     <div class="types" id="mTypes">
       <button data-t="gasto">Gasto</button><button data-t="ingreso">Ingreso</button>
@@ -478,6 +548,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
       <button class="btn ghost" id="mCancel">Cancelar</button>
       <button class="btn" id="mSave">Guardar</button>
     </div>
+    <div class="actions" id="mDelBox" hidden><button class="btn ghost" id="mDel" style="color:var(--bad)">Eliminar movimiento</button></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -687,13 +758,13 @@ function parseEntry(text){
   S.accts.forEach(function(a){
     var keys=[norm(a.n).replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim()].concat(ACCT_SYN[a.id]||[]),pos=-1;
     keys.forEach(function(k){if(!k)return;var p=n2.indexOf(' '+k+' ');if(p>-1&&(pos<0||p<pos))pos=p;});
-    if(pos>-1)hits.push({id:a.id,pos:pos});
+    if(pos>-1){hits.push({id:a.id,pos:pos});if(type==='gasto'||type==='ingreso')keys.forEach(function(k){if(k)n2=n2.split(' '+k+' ').join('  ');});}
   });
   hits.sort(function(x,y){return x.pos-y.pos;});
   var acct=usaTarj?card.id:hits.length?hits[0].id:defAcct(),to=null;
   if(hits.length>=2&&has(/\b(transferi|transfiero|transferir|pase|paso|pasar|movi|muevo)\b/)){type='transfer';to=hits[1].id;}
   var list=CATS[type]||[],cat=list.length?dfltCat(list).id:'',best=0;
-  list.forEach(function(c){(c.k||[]).forEach(function(k){if(n.indexOf(' '+k+' ')>-1){if(k.length>best){best=k.length;cat=c.id;}}});});
+  list.forEach(function(c){(c.k||[]).forEach(function(k){if(n2.indexOf(' '+k+' ')>-1){if(k.length>best){best=k.length;cat=c.id;}}});});
   // si dijo "gasté" y no hubo match en gastos, probar si la palabra pertenece a otro tipo no aplica: queda "otros"
   var date=todayISO();
   if(has(/\bayer\b/)){var d=new Date();d.setDate(d.getDate()-1);date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -724,7 +795,7 @@ function openModal(p,heard){
   $('mAcct').innerHTML=acctOpts(da);$('mTo').innerHTML=acctOpts(p.to&&acctById(p.to)?p.to:(other?other.id:da));
   $('mAmt').value=p.amt||'';$('mCur').value=p.cur||S.cur;$('mDesc').value=p.desc||'';$('mDate').value=p.date||todayISO();
   if(p.goal)$('mGoal').value=p.goal;
-  $('mRepBox').hidden=!!mState.edit;$('mRep').checked=!!p.rep;$('mCuo').value=p.cuotas||'';
+  $('mDelBox').hidden=!mState.edit;$('mQuickBox').hidden=!!mState.edit||!!heard;$('mRepBox').hidden=!!mState.edit;$('mRep').checked=!!p.rep;$('mCuo').value=p.cuotas||'';
   $('mHeard').hidden=!heard;$('mHeard').textContent=heard?'“'+heard+'”':'';
   $('mTitle').textContent=mState.edit?'Editar movimiento':heard?'Confirmá lo que entendí':'Nuevo movimiento';
   $('modal').classList.add('on');if(!p.amt)setTimeout(function(){$('mAmt').focus();},50);
@@ -812,7 +883,7 @@ function renderInicio(){
   var T=totals(view.y,view.m),P=S.pct;
   var rate=T.inc>0?T.s/T.inc*100:0;
   $('kpis').innerHTML=
-    '<div class="card kpi"><small>Disponible</small><div class="v '+(T.free<0?'neg':'')+'">'+esc(fmt(T.free))+'</div><div class="s">sin asignar · ≈ '+esc(S.cur==='ARS'?fmt(T.free/ofiRate(),'USD'):fmt(T.free*ofiRate(),'ARS'))+'</div></div>'+
+    '<div class="card kpi"><small>Saldo del mes</small><div class="v '+(T.free<0?'neg':'')+'">'+esc(fmt(T.free))+'</div><div class="s">sin asignar · ≈ '+esc(S.cur==='ARS'?fmt(T.free/ofiRate(),'USD'):fmt(T.free*ofiRate(),'ARS'))+'</div></div>'+
     '<div class="card kpi"><small>Gastos</small><div class="v neg">'+esc(fmt(T.exp))+'</div><div class="s">'+(T.inc>0?Math.round(T.exp/T.inc*100)+'% del ingreso':'necesidades + gustos')+'</div></div>'+
     '<div class="card kpi"><small>Ingresos</small><div class="v pos">'+esc(fmt(T.inc))+'</div><div class="s">del mes</div></div>'+
     '<div class="card kpi"><small>Ahorro + inversión</small><div class="v" style="color:var(--accent)">'+esc(fmt(T.s))+'</div><div class="s">tasa de ahorro '+rate.toFixed(0)+'%</div></div>';
@@ -827,11 +898,9 @@ function renderInicio(){
       :'Promedio de '+(Lv.n===1?'tu último mes completo':'tus últimos '+Lv.n+' meses completos')+' con gastos ('+esc(Lv.labels.join(', '))+'). No incluye lo que apartás a ahorro e inversión.')+'</div>'
     :'<div class="empty">Cargá tus gastos y acá vas a ver cuánto necesitás por mes para vivir y para cuánto tiempo te alcanza tu plata.</div>';
   var O=availOfi();
-  $('homeAccts').innerHTML='<div class="split" style="margin-top:0"><div style="border-color:var(--ok)"><small>Disponible en pesos</small><b>'+esc(fmt(O.ars,'ARS'))+'</b></div>'+
-    '<div style="border-color:var(--accent)"><small>Disponible en dólares</small><b>'+esc(fmt(O.usd,'USD'))+'</b></div>'+
-    '<div style="border-color:var(--accent2)"><small>Física · Virtual</small><b style="font-size:1rem">💵 '+esc(fmt(A.fis))+'</b><b style="font-size:1rem">📱 '+esc(fmt(A.vir))+'</b></div></div>'+
-    '<div class="hint">Es el mismo total expresado en cada moneda. '+esc(ofiNote())+'.</div>'+
-    '<div class="list" style="margin-top:12px">'+acctsSorted().map(function(a){return acctRowHtml(a,false);}).join('')+'</div>';
+  $('homeAccts').innerHTML='<small>Disponible hoy</small><div class="big">'+esc(fmt(O.ars,'ARS'))+'</div><div class="sub">'+esc(fmt(O.usd,'USD'))+' al dólar oficial</div>'+
+    '<div class="chips2"><span>💵 Efectivo '+esc(fmt(A.fis))+'</span><span>📱 Virtual '+esc(fmt(A.vir))+'</span>'+(A.deuda>0?'<span>💳 Tarjetas −'+esc(fmt(A.deuda))+'</span>':'')+'</div>'+
+    '<div class="note">'+esc(ofiNote())+'</div>';
   var by={};monthTx(view.y,view.m).forEach(function(t){if(t.type!=='gasto')return;var c=catOf(t);by[c.n]=(by[c.n]||0)+val(t);});
   pie($('pieCat'),Object.keys(by).map(function(k){return{n:k,v:by[k]};}),'Gastos');
   pie($('pieDist'),[{n:'Necesidades',v:T.n,c:'#4f8cff'},{n:'Gustos',v:T.w,c:'#ffb648'},{n:'Ahorro',v:T.sav,c:'#2fd08a'},{n:'Inversión',v:T.inv,c:'#7c5cff'},{n:'Sin asignar',v:Math.max(0,T.free),c:'#94a3b8'}],T.inc>0?'Ingreso':'Total');
@@ -847,10 +916,14 @@ function acctRowHtml(a,ed){
   var b=acctBal(a),other=a.cur!==S.cur;
   return '<div class="acct"><span>'+esc(a.e)+'</span><div class="n"><b>'+esc(a.n)+(defAcct()===a.id?' ⭐':'')+'</b><small>'+kindLbl(a)+' · '+a.cur+'</small></div>'+
     '<div class="v'+(b<0?' neg':'')+'">'+esc(fmt(b,a.cur))+(other?'<small>≈ '+esc(fmt(conv(b,a.cur,S.cur,ofiRate())))+'</small>':'')+'</div>'+
-    (ed?'<button data-adef="'+esc(a.id)+'" aria-label="Usar por defecto">⭐</button><button data-aed="'+esc(a.id)+'" aria-label="Editar">✏️</button><button data-adel="'+esc(a.id)+'" aria-label="Eliminar">🗑️</button>':'')+'</div>';
+    (ed?'<button data-aed="'+esc(a.id)+'" aria-label="Editar">✏️</button>':'')+'</div>';
 }
-function renderTips(T){$('tips').innerHTML=tipsHtml(T);}
-function tipsHtml(T){
+var tipsAll=false;
+function renderTips(T){
+  $('tips').innerHTML=tipsHtml(T,tipsAll?0:3);
+  $('tipsMore').hidden=tipsHtml.count<=3;$('tipsMore').textContent=tipsAll?'Ver menos':'Ver los '+tipsHtml.count+' avisos';
+}
+function tipsHtml(T,max){
   var tips=[],P=S.pct,add=function(k,i,h){tips.push({w:{bad:0,warn:1,'':2,ok:3}[k],n:tips.length,h:'<div class="tip '+k+'">'+i+'<div>'+h+'</div></div>'});};
   var isCur=view.y===now.getFullYear()&&view.m===now.getMonth();
   var dim=new Date(view.y,view.m+1,0).getDate(),day=isCur?new Date().getDate():dim,left=dim-day+1;
@@ -904,21 +977,27 @@ function tipsHtml(T){
   if(cash>0&&S.inf>0)add('warn','💵','Tenés <b>'+esc(fmt(cash,'ARS'))+'</b> en efectivo. Con una inflación de '+S.inf+'% mensual pierde unos <b>'+esc(fmt(cash*S.inf/100,'ARS'))+' por mes</b>. Dejá en mano solo lo de la semana.');
   var needM=T.n>0?conv(T.n,S.cur,'ARS',S.rate):0;
   if(needM>0&&liq>needM*1.5)add('','🏦','Tenés <b>'+esc(fmt(liq,'ARS'))+'</b> en pesos disponibles, más de lo que gastás en necesidades en un mes. El excedente (unos '+esc(fmt(liq-needM,'ARS'))+') rinde más en una cuenta remunerada o un FCI money market, o sumándolo a tu fondo de emergencia.');
-  return tips.sort(function(a,b){return a.w-b.w||a.n-b.n;}).map(function(t){return t.h;}).join('');   // alertas primero, logros al final
+  var arr=tips.sort(function(a,b){return a.w-b.w||a.n-b.n;}).map(function(t){return t.h;});   // alertas primero, logros al final
+  tipsHtml.count=arr.length;return (max?arr.slice(0,max):arr).join('');
 }
 function renderMovs(){
   var q=norm(view.q),l=monthTx(view.y,view.m).filter(function(t){
     return (view.filter==='todos'||t.type===view.filter)&&(!q||norm(t.desc+' '+catOf(t).n+' '+acctLbl(t)).indexOf(q)>-1);
   }).sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:(a.id<b.id?1:-1);});
   $('txList').innerHTML=l.length?l.map(function(t){var c=catOf(t),sg=t.type==='ingreso'?'+':t.type==='transfer'?'⇄':'−',cl=t.type==='ingreso'?'pos':t.type==='gasto'?'neg':'';
-    return '<div class="tx"><div class="ic">'+esc(c.e)+'</div><div class="d"><b>'+esc(t.desc||c.n)+'</b><small>'+esc(t.date.split('-').reverse().join('/'))+' · '+esc(c.n)+' · '+esc(acctLbl(t))+'</small></div>'+
-      '<div class="a '+cl+'">'+sg+' '+esc(fmt(t.amt,t.cur))+'</div><button class="x" data-edit="'+esc(t.id)+'" aria-label="Editar">✏️</button><button class="x" data-del="'+esc(t.id)+'" aria-label="Eliminar">🗑️</button></div>';}).join('')
+    return '<div class="tx" data-edit="'+esc(t.id)+'"><div class="ic">'+esc(c.e)+'</div><div class="d"><b>'+esc(t.desc||c.n)+'</b><small>'+esc(t.date.split('-').reverse().join('/'))+' · '+esc(c.n)+' · '+esc(acctLbl(t))+'</small></div>'+
+      '<div class="a '+cl+'">'+sg+' '+esc(fmt(t.amt,t.cur))+'</div></div>';}).join('')
     :'<div class="empty">No hay movimientos para mostrar.</div>';
 }
 $('txList').onclick=function(e){
-  var ed=e.target.dataset.edit;
-  if(ed){var t=S.tx.filter(function(x){return x.id===ed;})[0];if(t)openModal({id:t.id,type:t.type,cat:t.cat,amt:t.amt,cur:t.cur,desc:t.desc,date:t.date,acct:t.acct,to:t.to,goal:t.goal});return;}
-  var id=e.target.dataset.del;if(id&&confirm('¿Eliminar este movimiento?')){S.tx=S.tx.filter(function(t){return t.id!==id;});save();render();}};
+  var row=e.target.closest('[data-edit]');if(!row)return;
+  var t=S.tx.filter(function(x){return x.id===row.dataset.edit;})[0];
+  if(t)openModal({id:t.id,type:t.type,cat:t.cat,amt:t.amt,cur:t.cur,desc:t.desc,date:t.date,acct:t.acct,to:t.to,goal:t.goal});
+};
+$('mDel').onclick=function(){
+  if(!mState.edit||!confirm('¿Eliminar este movimiento?'))return;
+  S.tx=S.tx.filter(function(t){return t.id!==mState.edit;});save();closeModal();render();toast('Movimiento eliminado');
+};
 $('fChips').onclick=function(e){var f=e.target.dataset.f;if(!f)return;view.filter=f;Array.prototype.forEach.call(this.children,function(b){b.classList.toggle('on',b.dataset.f===f);});renderMovs();};
 $('fSearch').oninput=function(){view.q=this.value;renderMovs();};
 
@@ -1091,14 +1170,15 @@ function renderCuentas(){
     '<div class="card kpi"><small>Patrimonio neto</small><div class="v" style="color:var(--accent2)">'+esc(fmt(netWorth()))+'</div><div class="s">lo que tenés menos lo que debés</div></div>';
   $('acctList').innerHTML=acctsSorted().map(function(a){return acctRowHtml(a,true);}).join('');
   pie($('pieAcct'),S.accts.map(function(a){return{n:a.n,v:conv(acctBal(a),a.cur,S.cur,ofiRate())};}),'Con saldo');
-  $('aFormTitle').textContent=aState.edit?'✏️ Editar cuenta':'➕ Nueva cuenta o billetera';
+  $('aFormTitle').textContent=aState.edit?'Editar cuenta':'Nueva cuenta o billetera';
   $('aSave').textContent=aState.edit?'Guardar cambios':'Agregar cuenta';$('aCancel').hidden=!aState.edit;
+  $('aExtra').hidden=!aState.edit;$('aDef').dataset.adef=aState.edit||'';$('aDel').dataset.adel=aState.edit||'';
 }
 function aClear(){aState.edit=null;$('aEmoji').value='';$('aName').value='';$('aBal').value='';$('aKind').value='virtual';$('aCur').value='ARS';}
-$('acctList').onclick=function(e){
+$('acctList').onclick=$('aDef').onclick=$('aDel').onclick=function(e){
   var d=e.target.dataset,a;
-  if(d.adef&&acctById(d.adef)){S.defAcct=d.adef;save();render();toast('Cuenta por defecto actualizada');}
-  if(d.aed&&(a=acctById(d.aed))){aState.edit=a.id;$('aEmoji').value=a.e;$('aName').value=a.n;$('aKind').value=a.k;$('aCur').value=a.cur;$('aBal').value=Math.round((a.k==='credito'?Math.abs(acctBal(a)):acctBal(a))*100)/100;renderCuentas();$('aName').focus();}
+  if(d.adef&&acctById(d.adef)){S.defAcct=d.adef;aClear();save();render();toast('Cuenta por defecto actualizada');}
+  if(d.aed&&(a=acctById(d.aed))){aState.edit=a.id;$('aEmoji').value=a.e;$('aName').value=a.n;$('aKind').value=a.k;$('aCur').value=a.cur;setTimeout(function(){$('aFormTitle').scrollIntoView({behavior:'smooth',block:'start'});},30);$('aBal').value=Math.round((a.k==='credito'?Math.abs(acctBal(a)):acctBal(a))*100)/100;renderCuentas();$('aName').focus();}
   if(d.adel&&(a=acctById(d.adel))){
     if(S.accts.length<2){toast('Tiene que quedar al menos una cuenta');return;}
     var rest=S.accts.filter(function(x){return x.id!==a.id;}),dest=rest[0];
@@ -1163,11 +1243,11 @@ $('dAdd').onclick=function(){var n=$('dName').value.trim(),a=parseFloat($('dAmt'
   $('dName').value='';$('dAmt').value='';$('dDue').value='';save();render();toast('Agregado');};
 function planReportHtml(){
   var h='',sp=spentByCat(),bud=CATS.gasto.filter(function(c){return S.bud[c.id];}),RT=recTotals(),D=debtTotals(),A=acctTotals();
-  if(bud.length)h+='<div class="card"><h3>🎯 Topes por categoría</h3><div class="tblwrap"><table class="tbl"><tr><th>Categoría</th><th class="r">Tope</th><th class="r">Gastado</th><th class="r">Uso</th><th>Estado</th></tr>'+
+  if(bud.length)h+='<div class="card"><h3>Topes por categoría</h3><div class="tblwrap"><table class="tbl"><tr><th>Categoría</th><th class="r">Tope</th><th class="r">Gastado</th><th class="r">Uso</th><th>Estado</th></tr>'+
     bud.map(function(c){var lim=conv(S.bud[c.id].amt,S.bud[c.id].cur,S.cur,S.rate),v=sp[c.id]||0,pc=lim>0?v/lim*100:0;
       return '<tr><td>'+esc(c.n)+'</td><td class="r">'+esc(fmt(lim))+'</td><td class="r">'+esc(fmt(v))+'</td><td class="r">'+Math.round(pc)+'%</td><td>'+(pc>100?'⚠️ Excedido':pc>=80?'⚠️ Cerca del tope':'✅ En regla')+'</td></tr>';}).join('')+'</table></div></div>';
   if(S.rec.length||S.debts.length||A.deuda>0){
-    h+='<div class="card"><h3>📅 Compromisos y deudas</h3><div class="tblwrap"><table class="tbl"><tr><th>Concepto</th><th class="r">Monto</th></tr>'+
+    h+='<div class="card"><h3>Compromisos y deudas</h3><div class="tblwrap"><table class="tbl"><tr><th>Concepto</th><th class="r">Monto</th></tr>'+
       '<tr><td>Gastos fijos por mes</td><td class="r">'+esc(fmt(RT.fijos))+'</td></tr><tr><td>Cuotas por mes</td><td class="r">'+esc(fmt(RT.cuotas))+'</td></tr>'+
       '<tr><td>Deuda en tarjetas de crédito</td><td class="r">'+esc(fmt(A.deuda))+'</td></tr><tr><td>Otras deudas (yo debo)</td><td class="r">'+esc(fmt(D.debo))+'</td></tr>'+
       '<tr><td>Me deben</td><td class="r">'+esc(fmt(D.med))+'</td></tr><tr class="tot"><td>Patrimonio neto</td><td class="r">'+esc(fmt(netWorth()))+'</td></tr></table></div>';
@@ -1215,22 +1295,22 @@ function renderReport(){
   var T=totals(view.y,view.m),PT=prevTotals(),P=S.pct,A=acctTotals(),O=availOfi(),cats=catRows(),ym=ymKey();
   var vr=function(a,b){return b>0?((a-b)/b*100>=0?'+':'')+((a-b)/b*100).toFixed(0)+'%':'—';};
   var row=function(l,a,b){return '<tr><td>'+l+'</td><td class="r">'+esc(fmt(a))+'</td><td class="r">'+esc(fmt(b))+'</td><td class="r">'+vr(a,b)+'</td></tr>';};
-  var h='<div class="card"><h2>📄 Reporte financiero · '+esc(monthLabel())+'</h2><p class="hint" style="margin:0 0 12px">Generado el '+new Date().toLocaleDateString('es-AR')+
+  var h='<div class="card"><h2>Reporte financiero · '+esc(monthLabel())+'</h2><p class="hint" style="margin:0 0 12px">Generado el '+new Date().toLocaleDateString('es-AR')+
     ' · Valores en '+(S.cur==='USD'?'dólares':'pesos')+' · Dólar '+esc(S.rateType)+': $ '+Number(S.rate).toLocaleString('es-AR')+'</p>'+
     '<div class="tblwrap"><table class="tbl"><tr><th>Concepto</th><th class="r">Este mes</th><th class="r">Mes anterior</th><th class="r">Variación</th></tr>'+
     row('Ingresos',T.inc,PT.inc)+row('Necesidades',T.n,PT.n)+row('Gustos',T.w,PT.w)+row('Gastos totales',T.exp,PT.exp)+row('Ahorro',T.sav,PT.sav)+row('Inversión',T.inv,PT.inv)+
     '<tr class="tot"><td>Disponible del mes</td><td class="r">'+esc(fmt(T.free))+'</td><td class="r">'+esc(fmt(PT.free))+'</td><td class="r"></td></tr></table></div></div>';
-  h+='<div class="card"><h3>💼 Cuentas y billeteras</h3><div class="tblwrap"><table class="tbl"><tr><th>Cuenta</th><th>Tipo</th><th class="r">Saldo</th><th class="r">En '+S.cur+'</th></tr>'+
+  h+='<div class="card"><h3>Cuentas y billeteras</h3><div class="tblwrap"><table class="tbl"><tr><th>Cuenta</th><th>Tipo</th><th class="r">Saldo</th><th class="r">En '+S.cur+'</th></tr>'+
     acctsSorted().map(function(a){var b=acctBal(a);return '<tr><td>'+esc(a.e)+' '+esc(a.n)+'</td><td>'+kindLbl(a)+'</td><td class="r">'+esc(fmt(b,a.cur))+'</td><td class="r">'+esc(fmt(conv(b,a.cur,S.cur,ofiRate())))+'</td></tr>';}).join('')+
     '<tr><td colspan="3">Subtotal física</td><td class="r">'+esc(fmt(A.fis))+'</td></tr><tr><td colspan="3">Subtotal virtual</td><td class="r">'+esc(fmt(A.vir))+'</td></tr>'+
     '<tr class="tot"><td colspan="3">Total disponible</td><td class="r">'+esc(fmt(A.tot))+'</td></tr>'+
     '<tr class="tot"><td colspan="3">Disponible en pesos (dólar oficial)</td><td class="r">'+esc(fmt(O.ars,'ARS'))+'</td></tr>'+
     '<tr class="tot"><td colspan="3">Disponible en dólares (dólar oficial)</td><td class="r">'+esc(fmt(O.usd,'USD'))+'</td></tr></table></div><p class="hint">'+esc(ofiNote())+'.</p></div>';
-  h+='<div class="card"><h3>🧭 Análisis automático y recomendaciones</h3><div class="tips">'+tipsHtml(T)+'</div></div>';
+  h+='<div class="card"><h3>Análisis automático y recomendaciones</h3><div class="tips">'+tipsHtml(T)+'</div></div>';
   if(T.inc>0){
     var r2=function(l,p,real,inv){var obj=T.inc*p/100,ok=inv?real>=obj:real<=obj;
       return '<tr><td>'+l+' ('+p+'%)</td><td class="r">'+esc(fmt(obj))+'</td><td class="r">'+esc(fmt(real))+'</td><td class="r">'+(real/T.inc*100).toFixed(0)+'%</td><td>'+(ok?'✅ En regla':inv?'⚠️ Por debajo':'⚠️ Excedido')+'</td></tr>';};
-    h+='<div class="card"><h3>📊 Regla '+P.n+'/'+P.w+'/'+P.s+'</h3><div class="tblwrap"><table class="tbl"><tr><th>Rubro</th><th class="r">Objetivo</th><th class="r">Real</th><th class="r">% ingreso</th><th>Estado</th></tr>'+
+    h+='<div class="card"><h3>Regla '+P.n+'/'+P.w+'/'+P.s+'</h3><div class="tblwrap"><table class="tbl"><tr><th>Rubro</th><th class="r">Objetivo</th><th class="r">Real</th><th class="r">% ingreso</th><th>Estado</th></tr>'+
       r2('Necesidades',P.n,T.n,false)+r2('Gustos',P.w,T.w,false)+r2('Ahorro e inversión',P.s,T.s,true)+'</table></div></div>';
   }
   h+=planReportHtml();
@@ -1239,7 +1319,7 @@ function renderReport(){
   g.forEach(function(t){if(!maxT||val(t)>val(maxT))maxT=t;byDay[t.date]=(byDay[t.date]||0)+val(t);});
   var topDay=Object.keys(byDay).sort(function(a,b){return byDay[b]-byDay[a];})[0];
   var Lv=livingInfo(),st=function(l,v){return '<tr><td>'+l+'</td><td class="r">'+v+'</td></tr>';},pc=function(v){return T.inc>0?(v/T.inc*100).toFixed(1)+'%':'—';};
-  h+='<div class="card"><h3>📈 Estadísticas del mes</h3><div class="tblwrap"><table class="tbl"><tr><th>Indicador</th><th class="r">Valor</th></tr>'+
+  h+='<div class="card"><h3>Estadísticas del mes</h3><div class="tblwrap"><table class="tbl"><tr><th>Indicador</th><th class="r">Valor</th></tr>'+
     st('Costo de vida mensual'+(Lv.est?' (estimado)':' (promedio '+Lv.n+(Lv.n===1?' mes':' meses')+')'),Lv.exp>0?esc(fmt(Lv.exp)):'—')+st('Mínimo para vivir (solo necesidades)',Lv.nec>0?esc(fmt(Lv.nec)):'—')+
     st('Tu disponible alcanza para',mesesTxt(Lv.meses)+(Lv.mesesMin!=null?' · '+mesesTxt(Lv.mesesMin)+' gastando solo lo necesario':''))+
     st('Gasto promedio por día',esc(fmt(T.exp/day)))+st('Cantidad de gastos',g.length)+st('Gasto promedio por compra',g.length?esc(fmt(T.exp/g.length)):'—')+
@@ -1248,15 +1328,15 @@ function renderReport(){
     st('Días con gastos registrados',Object.keys(byDay).length+' de '+day)+
     st('Gastos sobre ingresos',pc(T.exp))+st('Necesidades sobre ingresos',pc(T.n))+st('Gustos sobre ingresos',pc(T.w))+st('Tasa de ahorro e inversión',pc(T.s))+
     st('Categoría principal',cats.length?esc(cats[0].n)+' · '+(cats[0].v/T.exp*100).toFixed(1)+'% del gasto':'—')+'</table></div></div>';
-  h+='<div class="card"><h3>📊 Evolución de los últimos 6 meses</h3>'+bars6()+'</div>';
-  h+='<div class="card"><h3>🥧 Gastos por categoría</h3><div class="pie" id="rPieCat"></div></div>'+
-     '<div class="card"><h3>🥧 Destino del ingreso</h3><div class="pie" id="rPieDist"></div></div>';
-  if(cats.length)h+='<div class="card"><h3>🏷️ Detalle por categoría</h3><div class="tblwrap"><table class="tbl"><tr><th>Categoría</th><th>Tipo</th><th class="r">Monto</th><th class="r">% del gasto</th></tr>'+
+  h+='<div class="card"><h3>Evolución de los últimos 6 meses</h3>'+bars6()+'</div>';
+  h+='<div class="card"><h3>Gastos por categoría</h3><div class="pie" id="rPieCat"></div></div>'+
+     '<div class="card"><h3>Destino del ingreso</h3><div class="pie" id="rPieDist"></div></div>';
+  if(cats.length)h+='<div class="card"><h3>Detalle por categoría</h3><div class="tblwrap"><table class="tbl"><tr><th>Categoría</th><th>Tipo</th><th class="r">Monto</th><th class="r">% del gasto</th></tr>'+
     cats.map(function(c){return '<tr><td>'+esc(c.n)+'</td><td>'+(c.g==='N'?'Necesidad':'Gusto')+'</td><td class="r">'+esc(fmt(c.v))+'</td><td class="r">'+(c.v/T.exp*100).toFixed(1)+'%</td></tr>';}).join('')+'</table></div></div>';
-  if(S.aiRep&&S.aiRep.ym===ym)h+='<div class="card flow"><h3>🤖 Análisis con IA (Claude)</h3><p class="hint" style="margin:0 0 8px">Generado el '+esc(S.aiRep.date)+' con '+esc(S.aiRep.model||'Claude')+
+  if(S.aiRep&&S.aiRep.ym===ym)h+='<div class="card flow"><h3>Análisis con IA (Claude)</h3><p class="hint" style="margin:0 0 8px">Generado el '+esc(S.aiRep.date)+' con '+esc(S.aiRep.model||'Claude')+
     '. Es información general, no asesoramiento financiero profesional.</p>'+mdLite(S.aiRep.text)+'</div>';
   var mv=monthTx(view.y,view.m).sort(function(a,b){return val(b)-val(a);});
-  h+='<div class="card flow"><h3>📋 Movimientos del mes ('+mv.length+') · de mayor a menor monto</h3>'+(mv.length?'<div class="tblwrap"><table class="tbl"><tr><th>Fecha</th><th>Detalle</th><th>Categoría</th><th>Cuenta</th><th class="r">Monto</th></tr>'+
+  h+='<div class="card flow"><h3>Movimientos del mes ('+mv.length+') · de mayor a menor monto</h3>'+(mv.length?'<div class="tblwrap"><table class="tbl"><tr><th>Fecha</th><th>Detalle</th><th>Categoría</th><th>Cuenta</th><th class="r">Monto</th></tr>'+
     mv.map(function(t){var c=catOf(t);return '<tr><td>'+esc(t.date.split('-').reverse().join('/'))+'</td><td>'+esc(t.desc||c.n)+'</td><td>'+esc(t.type==='gasto'?c.n:TYPE_LBL[t.type]+(t.type==='transfer'?'':' · '+c.n))+'</td><td>'+esc(acctLbl(t))+
       '</td><td class="r">'+(t.type==='ingreso'?'+':t.type==='transfer'?'⇄':'−')+' '+esc(fmt(t.amt,t.cur))+'</td></tr>';}).join('')+'</table></div>':'<div class="empty">Sin movimientos este mes.</div>')+'</div>';
   $('report').innerHTML=h;
@@ -1483,13 +1563,27 @@ function renderEstrategia(){
 }
 
 /* ---------- Navegación ---------- */
+var VIEW_T={inicio:'Mis Gastos',movs:'Movimientos',cuentas:'Cuentas',mas:'Más',estrategia:'Estrategia',plan:'Planificación',metas:'Ahorro e inversión',reporte:'Reportes',calc:'Calculadoras',ajustes:'Ajustes'};
+var SUBVIEW={estrategia:1,plan:1,metas:1,reporte:1,calc:1,ajustes:1},curView='inicio';
 function showView(v){
-  Array.prototype.forEach.call($('tabs').children,function(b){b.classList.toggle('on',b.dataset.v===v);if(b.dataset.v===v&&b.scrollIntoView)b.scrollIntoView({block:'nearest',inline:'center'});});
+  if(!VIEW_T[v])return;curView=v;
+  var tab=SUBVIEW[v]?'mas':v;
+  Array.prototype.forEach.call(document.querySelectorAll('#bnav [data-v]'),function(b){b.classList.toggle('on',b.dataset.v===tab);});
   Array.prototype.forEach.call(document.querySelectorAll('section.view'),function(x){x.classList.toggle('on',x.id==='v-'+v);});
+  $('vName').textContent=VIEW_T[v];$('backBtn').hidden=!SUBVIEW[v];
   window.scrollTo(0,0);
 }
-$('tabs').onclick=function(e){var v=e.target.dataset.v;if(v)showView(v);};
+$('bnav').onclick=function(e){var b=e.target.closest('[data-v]');if(b)showView(b.dataset.v);};
+$('menu').onclick=function(e){var b=e.target.closest('[data-go]');if(b)showView(b.dataset.go);};
+$('backBtn').onclick=function(){showView('mas');};
 $('goSt').onclick=function(){showView('estrategia');};
+$('tipsMore').onclick=function(){tipsAll=!tipsAll;renderTips(totals(view.y,view.m));};
+window.__back=function(){   // botón Atrás de Android: cierra la ventana, vuelve un nivel o sale
+  if($('modal').classList.contains('on')){closeModal();return 1;}
+  if(SUBVIEW[curView]){showView('mas');return 1;}
+  if(curView!=='inicio'){showView('inicio');return 1;}
+  return 0;
+};
 $('curPill').onclick=function(e){var c=e.target.dataset.cur;if(c){S.cur=c;save();render();}};
 $('themeBtn').onclick=function(){S.theme=S.theme==='dark'?'light':'dark';save();applyTheme();};
 $('mPrev').onclick=function(){view.m--;if(view.m<0){view.m=11;view.y--;}render();};
@@ -1500,7 +1594,7 @@ function syncInputs(){
   $('rType').value=S.rateType;$('rVal').value=S.rate;$('rOfi').value=S.ofi||'';$('eMonths').value=S.emMonths;$('infM').value=S.inf;rateInfo();
 }
 function render(){
-  var ml=new Date(view.y,view.m,1).toLocaleDateString('es-AR',{month:'long',year:'numeric'});$('mLabel').textContent=ml.charAt(0).toUpperCase()+ml.slice(1);
+  var ml=new Date(view.y,view.m,1).toLocaleDateString('es-AR',{month:'short'}).replace('.','');$('mLabel').textContent=ml.charAt(0).toUpperCase()+ml.slice(1)+' '+view.y;
   Array.prototype.forEach.call($('curPill').children,function(b){b.classList.toggle('on',b.dataset.cur===S.cur);});
   renderInicio();renderMovs();renderCalc();renderMetas();renderCats();renderCuentas();renderReport();renderEstrategia();renderPlan();
 }

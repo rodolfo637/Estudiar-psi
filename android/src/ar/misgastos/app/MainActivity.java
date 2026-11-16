@@ -344,9 +344,9 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        // Atrás cierra primero la ventana de carga; si no hay, sale de la app.
+        // Atrás: la página cierra la ventana abierta o vuelve un nivel; si ya está en Inicio, sale de la app.
         web.evaluateJavascript(
-            "(function(){var m=document.getElementById('modal');if(m&&m.classList.contains('on')){m.classList.remove('on');return 1;}return 0;})()",
+            "(function(){return window.__back?window.__back():0;})()",
             new ValueCallback<String>() {
                 public void onReceiveValue(String v) {
                     if (!"1".equals(v)) MainActivity.super.onBackPressed();
