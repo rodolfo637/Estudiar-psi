@@ -7,6 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintManager;
+import android.util.Base64;
 import android.speech.RecognizerIntent;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
@@ -33,7 +36,7 @@ public class MainActivity extends Activity {
 
     private WebView web;
     private ValueCallback<Uri[]> archivoCb;
-    private String contenidoPendiente;
+    private byte[] contenidoPendiente;
 
     @Override
     protected void onCreate(Bundle estado) {
@@ -145,7 +148,79 @@ public class MainActivity extends Activity {
         public void guardar(final String nombre, final String contenido, final String mime) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    contenidoPendiente = contenido;
+                    try { contenidoPendiente = contenido.getBytes("UTF-8"); } catch (Exception e) { return; }
+                    pedirDestino(nombre, mime);
+                }
+            });
+        }
+
+        /** Igual que guardar(), pero para archivos binarios (Excel) que llegan en base64. */
+        @JavascriptInterface
+        public void guardarB64(final String nombre, final String b64, final String mime) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    try { contenidoPendiente = Base64.decode(b64, Base64.DEFAULT); } catch (Exception e) { aviso("No pude preparar el archivo"); return; }
+                    pedirDestino(nombre, mime);
+                }
+            });
+        }
+
+        /** Abre el diálogo de impresión del sistema: ahí se elige "Guardar como PDF". */
+        @JavascriptInterface
+        public void imprimir(final String nombre) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    try {
+                        PrintManager pm = (PrintManager) getSystemService(PRINT_SERVICE);
+                        pm.print(nombre, web.createPrintDocumentAdapter(nombre), new PrintAttributes.Builder().build());
+                    } catch (Exception e) {
+                        aviso("No pude abrir la impresión a PDF en este teléfono");
+                    }
+                }
+            });
+        }
+
+        /** Llama a la API de Anthropic con la clave del usuario y devuelve estado + cuerpo a la página. */
+        @JavascriptInterface
+        public void ia(final String clave, final String cuerpo) {
+            new Thread(new Runnable() {
+                public void run() {
+                    HttpURLConnection c = null;
+                    try {
+                        c = (HttpURLConnection) new URL("https://api.anthropic.com/v1/messages").openConnection();
+                        c.setRequestMethod("POST");
+                        c.setConnectTimeout(15000);
+                        c.setReadTimeout(300000);
+                        c.setDoOutput(true);
+                        c.setRequestProperty("content-type", "application/json");
+                        c.setRequestProperty("x-api-key", clave);
+                        c.setRequestProperty("anthropic-version", "2026-10-21");
+                        c.setRequestProperty("anthropic-beta", "server-side-fallback-2026-07-01");
+                        OutputStream o = c.getOutputStream();
+                        o.write(cuerpo.getBytes("UTF-8"));
+                        o.close();
+                        int estado = c.getResponseCode();
+                        InputStream in = estado >= 400 ? c.getErrorStream() : c.getInputStream();
+                        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+                        if (in != null) {
+                            byte[] b = new byte[8192];
+                            int n;
+                            while ((n = in.read(b)) > 0) buf.write(b, 0, n);
+                            in.close();
+                        }
+                        js("window.__iaResp(" + estado + "," + JSONObject.quote(buf.toString("UTF-8")) + ")");
+                    } catch (Exception e) {
+                        js("window.__iaResp(0," + JSONObject.quote("{\"type\":\"error\",\"error\":{\"message\":\"sin conexión\"}}") + ")");
+                    } finally {
+                        if (c != null) c.disconnect();
+                    }
+                }
+            }).start();
+        }
+
+        private void pedirDestino(final String nombre, final String mime) {
+            {
+                {
                     String tipo = mime == null ? "*/*" : mime.split(";")[0].trim();
                     Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
@@ -158,7 +233,7 @@ public class MainActivity extends Activity {
                         aviso("No encontré una app para guardar archivos");
                     }
                 }
-            });
+            }
         }
 
         @JavascriptInterface
@@ -204,12 +279,12 @@ public class MainActivity extends Activity {
                 archivoCb = null;
             }
         } else if (req == REQ_GUARDAR) {
-            String contenido = contenidoPendiente;
+            byte[] contenido = contenidoPendiente;
             contenidoPendiente = null;
             if (res == RESULT_OK && data != null && data.getData() != null && contenido != null) {
                 try {
                     OutputStream o = getContentResolver().openOutputStream(data.getData());
-                    o.write(contenido.getBytes("UTF-8"));
+                    o.write(contenido);
                     o.close();
                     aviso("Archivo guardado");
                 } catch (Exception e) {
