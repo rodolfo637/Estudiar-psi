@@ -128,6 +128,13 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
 .steps{display:grid;gap:8px;margin-top:10px;counter-reset:st}
 .steps div{background:var(--surface2);border-radius:12px;padding:10px 12px 10px 42px;position:relative;font-size:.9rem;line-height:1.45}
 .steps div:before{counter-increment:st;content:counter(st);position:absolute;left:12px;top:10px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;font-size:.78rem;display:grid;place-items:center}
+.prow{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:14px;flex-wrap:wrap}
+.prow .n{flex:1;min-width:120px}.prow .n b{display:block;font-size:.92rem}.prow .n small{color:var(--muted);font-size:.76rem}
+.prow input{width:120px;padding:8px 10px;text-align:right}
+.prow .track{flex-basis:100%}
+.prow button{padding:6px;font-size:1rem}
+.chk{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:.9rem;color:var(--text);font-weight:600}
+.chk input{width:auto}
 .types{grid-template-columns:repeat(5,1fr)}
 .types button{font-size:.72rem;padding:9px 2px}
 .acct{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:14px}
@@ -175,6 +182,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
       <button data-v="estrategia">🧠 Estrategia</button>
       <button data-v="movs">📋 Movimientos</button>
       <button data-v="cuentas">💼 Cuentas</button>
+      <button data-v="plan">📅 Planificación</button>
       <button data-v="reporte">📄 Reportes</button>
       <button data-v="metas">🎯 Ahorro e inversión</button>
       <button data-v="calc">🧮 50/30/20</button>
@@ -329,15 +337,37 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
     <div class="row3">
       <div><label>Ícono (emoji)</label><input id="aEmoji" maxlength="8" placeholder="👛"></div>
       <div><label>Nombre</label><input id="aName" placeholder="Ej: Ualá, Brubank, Caja de ahorro"></div>
-      <div><label>Tipo</label><select id="aKind"><option value="virtual">Virtual (banco o billetera digital)</option><option value="fisica">Física (efectivo)</option></select></div>
+      <div><label>Tipo</label><select id="aKind"><option value="virtual">Virtual (banco o billetera digital)</option><option value="fisica">Física (efectivo)</option><option value="credito">Tarjeta de crédito</option></select></div>
     </div>
     <div class="row">
       <div><label>Moneda</label><select id="aCur"><option value="ARS">Pesos (ARS)</option><option value="USD">Dólares (USD)</option></select></div>
       <div><label>Saldo actual</label><input id="aBal" type="number" inputmode="decimal" step="any" placeholder="0"></div>
     </div>
     <div class="actions"><button class="btn ghost" id="aCancel" hidden>Cancelar</button><button class="btn" id="aSave">Agregar cuenta</button></div>
-    <div class="hint">Cargá cuánta plata tenés hoy en cada lugar. Desde ahí, cada gasto, ingreso o transferencia actualiza el saldo solo. Si un saldo no coincide con la realidad, editá la cuenta y corregí el “Saldo actual”.</div>
+    <div class="hint">Cargá cuánta plata tenés hoy en cada lugar. Desde ahí, cada gasto, ingreso o transferencia actualiza el saldo solo. Si un saldo no coincide con la realidad, editá la cuenta y corregí el “Saldo actual”. En una <b>tarjeta de crédito</b>, el saldo es lo que debés: no cuenta como plata disponible, cada compra la aumenta y la pagás con una transferencia desde tu banco hacia la tarjeta.</div>
   </div>
+</section>
+
+<!-- PLANIFICACIÓN -->
+<section class="view" id="v-plan">
+  <div class="grid kpis" id="planKpis"></div>
+  <div class="card" style="margin-top:14px"><h3>📅 Compromisos de los próximos 6 meses</h3><div id="planNext"></div></div>
+  <div class="card" style="margin-top:14px"><h3>🎯 Tope de gasto por categoría</h3><div class="list" id="budList"></div>
+    <div class="hint">Escribí cuánto querés gastar como máximo por mes en cada categoría. El asistente te avisa al llegar al 80% y si te pasás. Dejalo vacío para no poner tope.</div></div>
+  <div class="card" style="margin-top:14px"><h3>🔁 Gastos fijos y cuotas</h3><div class="list" id="recList"></div>
+    <div class="hint">Para agregar uno, cargá el movimiento como siempre y marcá <b>“Repetir todos los meses”</b> o indicá la <b>cantidad de cuotas</b>. También por voz: <i>“gasté 300 mil en alquiler todos los meses”</i>, <i>“gasté 120 mil en zapatillas en 6 cuotas”</i>. La app los registra sola el día que corresponde.</div></div>
+  <div class="card" style="margin-top:14px"><h3>🤝 Deudas y préstamos</h3><div class="list" id="debtList"></div>
+    <div class="row3" style="margin-top:12px">
+      <div><label>Con quién</label><input id="dName" placeholder="Ej: Préstamo banco, Juan"></div>
+      <div><label>Monto pendiente</label><input id="dAmt" type="number" inputmode="decimal" step="any"></div>
+      <div><label>Moneda</label><select id="dCur"><option value="ARS">ARS</option><option value="USD">USD</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>Tipo</label><select id="dDir"><option value="debo">Yo debo</option><option value="medeben">Me deben</option></select></div>
+      <div><label>Vencimiento (opcional)</label><input id="dDue" type="date"></div>
+    </div>
+    <div class="actions"><button class="btn" id="dAdd">Agregar</button></div>
+    <div class="hint">Cuando pagues o te paguen una parte, registrá el movimiento y corregí acá el monto pendiente. Lo que debés resta de tu patrimonio; lo que te deben, suma.</div></div>
 </section>
 
 <!-- REPORTES -->
@@ -406,8 +436,10 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
       <button class="btn ghost" id="expJson">Respaldo (JSON)</button>
       <button class="btn ghost" id="expCsv">Exportar CSV</button>
       <button class="btn ghost" id="impBtn">Importar respaldo</button>
+      <button class="btn ghost" id="bkNow" hidden>Respaldar ahora</button>
       <input type="file" id="impFile" accept="application/json" hidden>
     </div>
+    <div class="hint" id="bkInfo"></div>
     <div class="actions"><button class="btn danger" id="wipe">Borrar todo</button></div>
   </div>
 </section>
@@ -438,6 +470,10 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--accent)}
     <div id="mGoalBox" hidden><label>Meta (opcional)</label><select id="mGoal"></select></div>
     <label>Detalle</label><input id="mDesc" placeholder="Opcional">
     <label>Fecha</label><input id="mDate" type="date">
+    <div id="mRepBox">
+      <label class="chk"><input type="checkbox" id="mRep"> Repetir todos los meses (gasto fijo)</label>
+      <label>¿Es una compra en cuotas? Cantidad de cuotas (el monto de arriba es el total)</label><input id="mCuo" type="number" inputmode="numeric" min="2" max="60" placeholder="Vacío = no es en cuotas">
+    </div>
     <div class="actions">
       <button class="btn ghost" id="mCancel">Cancelar</button>
       <button class="btn" id="mSave">Guardar</button>
@@ -493,7 +529,7 @@ var COLORS=['#4f8cff','#7c5cff','#2fd08a','#ffb648','#ff5d6c','#22c7d6','#f472b6
 var KEY='misgastos.v1';
 var S={tx:[],goals:[],cur:'ARS',rate:1200,rateType:'blue',rateAt:null,pct:{n:50,w:30,s:20},theme:'dark',emMonths:6,inf:2.5};
 try{var raw=localStorage.getItem(KEY);if(raw){var o=JSON.parse(raw);for(var k in o)S[k]=o[k];}}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}autoBackup(false);}
 var DEF_CATS=JSON.stringify(CATS);            // categorías de fábrica
 if(!S.cats)S.cats=JSON.parse(DEF_CATS);
 CATS=S.cats;                                  // desde acá, las categorías son editables y se guardan
@@ -501,7 +537,53 @@ function migrate(){   // completa datos de versiones anteriores
   if(!S.cats)S.cats=JSON.parse(DEF_CATS);CATS=S.cats;
   if(!S.accts||!S.accts.length)S.accts=JSON.parse(JSON.stringify(DEF_ACCTS));
   S.tx.forEach(function(t){if(!t.acct||!acctById(t.acct))t.acct=S.accts[0].id;});
+  if(!S.rec)S.rec=[];if(!S.bud)S.bud={};if(!S.debts)S.debts=[];
 }
+function kindLbl(a){return a.k==='fisica'?'Física':a.k==='credito'?'Crédito':'Virtual';}
+function pad2(n){return String(n).padStart(2,'0');}
+function ymNow(){return now.getFullYear()+'-'+pad2(now.getMonth()+1);}
+/* Respaldo automático (solo en la app Android): una copia por día en Descargas/MisGastos */
+function autoBackup(force){
+  if(!(window.AndroidVoz&&AndroidVoz.respaldo))return;
+  if(!force&&(!S.tx.length||(S.bkAt&&Date.now()-S.bkAt<24*3600*1000)))return;
+  window.__respaldoOk=function(w){S.bkAt=Date.now();S.bkWhere=String(w);S.bkFail=false;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}bkInfo();if(force)toast('Respaldo guardado en '+w);};
+  window.__respaldoErr=function(){S.bkFail=true;bkInfo();if(force)toast('No pude guardar el respaldo automático. Usá “Respaldo (JSON)”.');};
+  S.bkAt=Date.now();   // evita pedidos repetidos mientras responde el teléfono
+  AndroidVoz.respaldo(JSON.stringify(S));
+}
+function bkInfo(){var el=document.getElementById('bkInfo');if(!el)return;
+  el.textContent=window.AndroidVoz&&AndroidVoz.respaldo?(S.bkFail?'El respaldo automático falló la última vez: hacé uno manual con “Respaldo (JSON)”.':S.bkWhere?'Respaldo automático diario activo. Última copia: '+new Date(S.bkAt).toLocaleString('es-AR')+' en '+S.bkWhere+'.':'Respaldo automático diario activo: la primera copia se hace al guardar un movimiento.')
+    :'En el navegador no hay respaldo automático: descargá un “Respaldo (JSON)” cada tanto.';}
+/* Gastos fijos y cuotas: genera los movimientos que correspondan hasta hoy */
+function recPending(r){return r.last<ymNow()&&!(r.n&&r.k>=r.n);}
+function applyRecurring(){
+  var t=new Date(),cy=t.getFullYear(),cm=t.getMonth(),made=0;
+  S.rec.forEach(function(r){
+    var q=String(r.last||ymNow()).split('-'),y=+q[0],m=+q[1]-1,guard=0;
+    while(guard++<36){
+      if(r.n&&r.k>=r.n)break;
+      m++;if(m>11){m=0;y++;}
+      if(y>cy||(y===cy&&m>cm))break;
+      var d=Math.min(r.day,new Date(y,m+1,0).getDate());
+      if(y===cy&&m===cm&&t.getDate()<d)break;
+      if(r.type==='transfer'&&!acctById(r.to))break;
+      r.k=(r.k||0)+1;r.last=y+'-'+pad2(m+1);made++;
+      var x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6)+made,type:r.type,amt:r.amt,cur:r.cur,cat:r.cat||'',acct:acctById(r.acct)?r.acct:defAcct(),
+        desc:r.desc+(r.n?' (cuota '+r.k+'/'+r.n+')':''),date:y+'-'+pad2(m+1)+'-'+pad2(d),rate:S.rate,rec:r.id};
+      if(r.type==='transfer')x.to=r.to;S.tx.push(x);
+    }
+  });
+  S.rec=S.rec.filter(function(r){return !(r.n&&r.k>=r.n);});   // las cuotas terminadas salen de la lista
+  if(made)save();return made;
+}
+function recTotals(){var r={fijos:0,cuotas:0,pend:0};S.rec.forEach(function(x){if(x.type!=='gasto')return;var v=conv(x.amt,x.cur,S.cur,S.rate);if(x.n)r.cuotas+=v;else r.fijos+=v;if(recPending(x))r.pend+=v;});return r;}
+function commitments(){var out=[],y=now.getFullYear(),m=now.getMonth();
+  for(var i=1;i<=6;i++){m++;if(m>11){m=0;y++;}var f=0,c=0;
+    S.rec.forEach(function(x){if(x.type!=='gasto')return;var v=conv(x.amt,x.cur,S.cur,S.rate);if(!x.n)f+=v;else if(x.n-x.k-(recPending(x)?1:0)>=i)c+=v;});
+    out.push({l:pad2(m+1)+'/'+String(y).slice(2),f:f,c:c});}
+  return out;}
+function debtTotals(){var r={debo:0,med:0};S.debts.forEach(function(d){var v=conv(d.amt,d.cur,S.cur,ofiRate());if(d.dir==='medeben')r.med+=v;else r.debo+=v;});return r;}
+function netWorth(){var A=acctTotals(),D=debtTotals(),sv=sum(S.tx.filter(function(t){return t.type==='ahorro'||t.type==='inversion';}),valNow);return A.tot+sv-A.deuda-D.debo+D.med;}
 function acctById(id){for(var i=0;i<S.accts.length;i++)if(S.accts[i].id===id)return S.accts[i];return null;}
 function defAcct(){return S.defAcct&&acctById(S.defAcct)?S.defAcct:S.accts[0].id;}
 function acctBal(a){   // saldo en la moneda de la cuenta
@@ -512,9 +594,9 @@ function acctBal(a){   // saldo en la moneda de la cuenta
   });
   return b;
 }
-function acctTotals(){var r={fis:0,vir:0,tot:0};S.accts.forEach(function(a){var v=conv(acctBal(a),a.cur,S.cur,ofiRate());r.tot+=v;if(a.k==='fisica')r.fis+=v;else r.vir+=v;});return r;}
+function acctTotals(){var r={fis:0,vir:0,tot:0,deuda:0};S.accts.forEach(function(a){var v=conv(acctBal(a),a.cur,S.cur,ofiRate());if(a.k==='credito'){r.deuda+=Math.max(0,-v);return;}r.tot+=v;if(a.k==='fisica')r.fis+=v;else r.vir+=v;});return r;}
 function ofiRate(){return S.ofi>0?S.ofi:S.rate;}   // dólar oficial (si todavía no se obtuvo, la cotización de Ajustes)
-function availOfi(){var o=ofiRate(),ars=0;S.accts.forEach(function(a){ars+=conv(acctBal(a),a.cur,'ARS',o);});return{ars:ars,usd:ars/o,rate:o};}
+function availOfi(){var o=ofiRate(),ars=0;S.accts.forEach(function(a){if(a.k!=='credito')ars+=conv(acctBal(a),a.cur,'ARS',o);});return{ars:ars,usd:ars/o,rate:o};}
 function ofiNote(){return 'Dólar oficial: $ '+Number(ofiRate()).toLocaleString('es-AR')+(S.ofi>0?(S.ofiAt?' · actualizado el '+new Date(S.ofiAt).toLocaleString('es-AR'):' · cargado a mano'):' · todavía sin actualizar: se usa la cotización de Ajustes');}
 function acctsSorted(){var o=ofiRate();return S.accts.slice().sort(function(a,b){return conv(acctBal(b),b.cur,'ARS',o)-conv(acctBal(a),a.cur,'ARS',o);});}   // de mayor a menor saldo
 function livingInfo(){   // costo de vida: promedio de hasta 3 meses completos; si no hay, estimación con el mes en curso
@@ -596,6 +678,11 @@ function parseEntry(text){
   else if(has(/\b(ahorre|ahorro|ahorrar|guarde|guardo|aparte|separe)\b/)||has(/\bcompre (\S+ ){0,2}(dolares|usd)\b/))type='ahorro';
   else if(has(/\b(cobre|cobro|ingreso|ingresaron|sueldo|aguinaldo|me pagaron|me depositaron|gane|recibi|me transfirieron|vendi)\b/))type='ingreso';
   var cur=has(/\b(dolar|dolares|usd|verdes|us)\b/)?'USD':'ARS';
+  var card=S.accts.filter(function(a){return a.k==='credito';})[0],conTarj=/\bcon (la )?(tarjeta( de credito)?|credito)\b/;
+  var usaTarj=!!card&&conTarj.test(n);if(usaTarj)n=n.replace(conTarj,' ');   // "con tarjeta" es el medio de pago, no la categoría
+  var t0=norm(text),cu=/\b(\d+|[a-z]+) cuotas\b/.exec(t0),cuotas=cu?(/^\d+$/.test(cu[1])?+cu[1]:UNITS[cu[1]]||null):null,amtTxt=text,perCuota=false;
+  if(cuotas&&cuotas>=2&&cuotas<=60){var ci=t0.indexOf('cuotas de ');if(ci>-1){amtTxt=t0.slice(ci+10);perCuota=true;}else amtTxt=t0.replace(cu[0],' ');}else cuotas=null;
+  var repM=has(/\b(todos los meses|cada mes|mensual|mensualmente|por mes)\b/);
   var n2=n.replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' '),hits=[];
   S.accts.forEach(function(a){
     var keys=[norm(a.n).replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim()].concat(ACCT_SYN[a.id]||[]),pos=-1;
@@ -603,7 +690,7 @@ function parseEntry(text){
     if(pos>-1)hits.push({id:a.id,pos:pos});
   });
   hits.sort(function(x,y){return x.pos-y.pos;});
-  var acct=hits.length?hits[0].id:defAcct(),to=null;
+  var acct=usaTarj?card.id:hits.length?hits[0].id:defAcct(),to=null;
   if(hits.length>=2&&has(/\b(transferi|transfiero|transferir|pase|paso|pasar|movi|muevo)\b/)){type='transfer';to=hits[1].id;}
   var list=CATS[type]||[],cat=list.length?dfltCat(list).id:'',best=0;
   list.forEach(function(c){(c.k||[]).forEach(function(k){if(n.indexOf(' '+k+' ')>-1){if(k.length>best){best=k.length;cat=c.id;}}});});
@@ -611,7 +698,8 @@ function parseEntry(text){
   var date=todayISO();
   if(has(/\bayer\b/)){var d=new Date();d.setDate(d.getDate()-1);date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   var desc=String(text).trim();desc=desc.charAt(0).toUpperCase()+desc.slice(1);
-  return{type:type,amt:parseAmount(text),cur:cur,cat:cat,desc:desc,date:date,acct:acct,to:to};
+  var amt=parseAmount(amtTxt);if(amt&&perCuota)amt=Math.round(amt*cuotas*100)/100;
+  return{type:type,amt:amt,cur:cur,cat:cat,desc:desc,date:date,acct:acct,to:to,cuotas:cuotas,rep:repM&&!cuotas};
 }
 window.__parse=parseEntry; // útil para pruebas
 
@@ -636,6 +724,7 @@ function openModal(p,heard){
   $('mAcct').innerHTML=acctOpts(da);$('mTo').innerHTML=acctOpts(p.to&&acctById(p.to)?p.to:(other?other.id:da));
   $('mAmt').value=p.amt||'';$('mCur').value=p.cur||S.cur;$('mDesc').value=p.desc||'';$('mDate').value=p.date||todayISO();
   if(p.goal)$('mGoal').value=p.goal;
+  $('mRepBox').hidden=!!mState.edit;$('mRep').checked=!!p.rep;$('mCuo').value=p.cuotas||'';
   $('mHeard').hidden=!heard;$('mHeard').textContent=heard?'“'+heard+'”':'';
   $('mTitle').textContent=mState.edit?'Editar movimiento':heard?'Confirmá lo que entendí':'Nuevo movimiento';
   $('modal').classList.add('on');if(!p.amt)setTimeout(function(){$('mAmt').focus();},50);
@@ -649,10 +738,19 @@ $('mSave').onclick=function(){
   if(!(amt>0)){toast('Ingresá un monto mayor a 0');$('mAmt').focus();return;}
   if(type==='transfer'&&$('mTo').value===acct){toast('Elegí dos cuentas distintas');return;}
   var t=mState.edit?S.tx.filter(function(x){return x.id===mState.edit;})[0]:null,isNew=!t;
+  var nCuo=isNew?parseInt($('mCuo').value,10):0,fijo=isNew&&$('mRep').checked;
+  if(nCuo&&(nCuo<2||nCuo>60)){toast('Las cuotas van de 2 a 60');$('mCuo').focus();if(isNew)return;}
+  if(nCuo>=2)amt=Math.round(amt/nCuo*100)/100;   // el monto cargado es el total de la compra
   if(!t){t={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),rate:S.rate};S.tx.push(t);}
   t.type=type;t.amt=amt;t.cur=$('mCur').value;t.acct=acct;t.desc=$('mDesc').value.trim();t.date=$('mDate').value||todayISO();
   if(type==='transfer'){t.to=$('mTo').value;t.cat='';delete t.goal;}
   else{delete t.to;t.cat=$('mCat').value;if(type==='ahorro'&&$('mGoal').value)t.goal=$('mGoal').value;else delete t.goal;}
+  if(nCuo>=2||fijo){
+    var base=t.desc||(type==='transfer'?'Transferencia':catOf(t).n),r={id:'r'+Date.now().toString(36),type:type,amt:amt,cur:t.cur,cat:t.cat,acct:acct,desc:base,day:+t.date.slice(8,10),last:t.date.slice(0,7)};
+    if(type==='transfer')r.to=t.to;
+    if(nCuo>=2){r.n=nCuo;r.k=1;t.desc=base+' (cuota 1/'+nCuo+')';}
+    t.rec=r.id;S.rec.push(r);applyRecurring();
+  }
   save();closeModal();
   var d=new Date(t.date+'T12:00:00');view.y=d.getFullYear();view.m=d.getMonth();
   render();toast('✅ '+TYPE_LBL[t.type]+(isNew?' guardado: ':' actualizado: ')+fmt(t.amt,t.cur));
@@ -747,7 +845,7 @@ function renderInicio(){
 }
 function acctRowHtml(a,ed){
   var b=acctBal(a),other=a.cur!==S.cur;
-  return '<div class="acct"><span>'+esc(a.e)+'</span><div class="n"><b>'+esc(a.n)+(defAcct()===a.id?' ⭐':'')+'</b><small>'+(a.k==='fisica'?'Física':'Virtual')+' · '+a.cur+'</small></div>'+
+  return '<div class="acct"><span>'+esc(a.e)+'</span><div class="n"><b>'+esc(a.n)+(defAcct()===a.id?' ⭐':'')+'</b><small>'+kindLbl(a)+' · '+a.cur+'</small></div>'+
     '<div class="v'+(b<0?' neg':'')+'">'+esc(fmt(b,a.cur))+(other?'<small>≈ '+esc(fmt(conv(b,a.cur,S.cur,ofiRate())))+'</small>':'')+'</div>'+
     (ed?'<button data-adef="'+esc(a.id)+'" aria-label="Usar por defecto">⭐</button><button data-aed="'+esc(a.id)+'" aria-label="Editar">✏️</button><button data-adel="'+esc(a.id)+'" aria-label="Eliminar">🗑️</button>':'')+'</div>';
 }
@@ -785,8 +883,22 @@ function tipsHtml(T){
     var pm=view.m===0?11:view.m-1,py=view.m===0?view.y-1:view.y,PT=totals(py,pm);
     if(PT.exp>0&&!isCur){var d=(T.exp-PT.exp)/PT.exp*100;add(d>0?'warn':'ok','📅','Gastaste <b>'+Math.abs(d).toFixed(0)+'% '+(d>0?'más':'menos')+'</b> que el mes anterior.');}
   }
+  var spentId={};monthTx(view.y,view.m).forEach(function(t){if(t.type==='gasto')spentId[t.cat]=(spentId[t.cat]||0)+val(t);});
+  CATS.gasto.forEach(function(c){var b=S.bud[c.id];if(!b)return;var lim=conv(b.amt,b.cur,S.cur,S.rate),sp=spentId[c.id]||0;if(!(lim>0))return;
+    if(sp>lim)add('bad','🎯','Te pasaste del tope de <b>'+esc(c.n)+'</b>: llevás '+esc(fmt(sp))+' de '+esc(fmt(lim))+'.');
+    else if(sp>=lim*0.8)add('warn','🎯','Ya usaste el '+Math.round(sp/lim*100)+'% del tope de <b>'+esc(c.n)+'</b>: te quedan '+esc(fmt(lim-sp))+'.');});
+  if(isCur){var RT=recTotals(),td=new Date().getDate();
+    S.rec.forEach(function(x){if(x.type!=='gasto'||!recPending(x))return;var dd=Math.min(x.day,dim)-td;
+      if(dd>=0&&dd<=5)add('warn','📅',(dd===0?'Hoy vence':'En '+dd+(dd===1?' día':' días')+' vence')+' <b>'+esc(x.desc)+'</b>: '+esc(fmt(x.amt,x.cur))+'.');});
+    if(RT.pend>0)add('','📅','Todavía faltan <b>'+esc(fmt(RT.pend))+'</b> de gastos fijos y cuotas este mes. Reservalos antes de gastar en otra cosa.');}
+  S.debts.forEach(function(d){if(d.dir==='medeben'||!d.due)return;var dd=Math.round((new Date(d.due+'T12:00:00')-new Date(todayISO()+'T12:00:00'))/864e5);
+    if(dd<0)add('bad','🤝','La deuda con <b>'+esc(d.name)+'</b> ('+esc(fmt(d.amt,d.cur))+') venció hace '+(-dd)+(dd===-1?' día':' días')+'.');
+    else if(dd<=7)add('warn','🤝',(dd===0?'Hoy vence':'En '+dd+(dd===1?' día':' días')+' vence')+' la deuda con <b>'+esc(d.name)+'</b>: '+esc(fmt(d.amt,d.cur))+'.');});
+  var AT=acctTotals();if(AT.deuda>0)add('','💳','Debés <b>'+esc(fmt(AT.deuda))+'</b> en tarjetas de crédito. Pagá el total del resumen: financiar el saldo es la deuda más cara.');
+  if(!(window.AndroidVoz&&AndroidVoz.respaldo&&!S.bkFail)&&S.tx.length>=10&&(!S.expAt||Date.now()-S.expAt>14*864e5))add('warn','💾','Hace más de dos semanas que no hacés un respaldo. Andá a Ajustes → Respaldo (JSON): si perdés el teléfono, perdés los datos.');
   var cash=0,liq=0;
   S.accts.forEach(function(a){var b=acctBal(a);
+    if(a.k==='credito')return;
     if(b<-0.005)add('bad','🚨','La cuenta <b>'+esc(a.n)+'</b> quedó en negativo ('+esc(fmt(b,a.cur))+'). Revisá si falta cargar un ingreso o una transferencia, o corregí su saldo en Cuentas.');
     if(a.cur==='ARS'&&b>0){liq+=b;if(a.k==='fisica')cash+=b;}});
   if(cash>0&&S.inf>0)add('warn','💵','Tenés <b>'+esc(fmt(cash,'ARS'))+'</b> en efectivo. Con una inflación de '+S.inf+'% mensual pierde unos <b>'+esc(fmt(cash*S.inf/100,'ARS'))+' por mes</b>. Dejá en mano solo lo de la semana.');
@@ -902,7 +1014,8 @@ function dlBin(name,bytes,type){   // archivos binarios (Excel)
   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([bytes],{type:type}));a.download=name;document.body.appendChild(a);a.click();a.remove();
 }
 function dl(name,content,type){if(window.AndroidVoz&&AndroidVoz.guardar){AndroidVoz.guardar(name,content,type);return;}var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:type}));a.download=name;document.body.appendChild(a);a.click();a.remove();}
-$('expJson').onclick=function(){dl('mis-gastos-'+todayISO()+'.json',JSON.stringify(S,null,2),'application/json');};
+$('bkNow').onclick=function(){autoBackup(true);};
+$('expJson').onclick=function(){S.expAt=Date.now();save();dl('mis-gastos-'+todayISO()+'.json',JSON.stringify(S,null,2),'application/json');};
 function exportCsv(){
   var q=function(s){return '"'+String(s).replace(/"/g,'""')+'"';};
   var rows=['Fecha;Tipo;Categoría;Detalle;Cuenta;Monto;Moneda;Cotización'].concat(S.tx.slice().sort(function(a,b){return a.date<b.date?-1:1;}).map(function(t){
@@ -916,7 +1029,7 @@ $('impFile').onchange=function(){var f=this.files[0];if(!f)return;var rd=new Fil
     if(!confirm('Esto reemplaza los datos actuales por los del respaldo ('+o.tx.length+' movimientos). ¿Continuar?'))return;
     for(var k in o)S[k]=o[k];migrate();save();syncInputs();render();toast('Respaldo importado');}catch(e){toast('Archivo inválido');}};
   rd.readAsText(f);this.value='';};
-$('wipe').onclick=function(){if(confirm('¿Borrar TODOS los movimientos y metas? No se puede deshacer.')&&confirm('Última confirmación: ¿borrar todo?')){S.tx=[];S.goals=[];save();render();toast('Datos borrados');}};
+$('wipe').onclick=function(){if(confirm('¿Borrar TODOS los movimientos y metas? No se puede deshacer.')&&confirm('Última confirmación: ¿borrar todo?')){S.tx=[];S.goals=[];S.rec=[];S.debts=[];S.bud={};save();render();toast('Datos borrados');}};
 
 /* ---------- Categorías (agregar, editar, eliminar) ---------- */
 var kState={type:'gasto',edit:null};
@@ -975,7 +1088,7 @@ function renderCuentas(){
     '<div class="card kpi"><small>Disponible en pesos</small><div class="v pos">'+esc(fmt(O.ars,'ARS'))+'</div><div class="s">todo al dólar oficial</div></div>'+
     '<div class="card kpi"><small>Disponible en dólares</small><div class="v" style="color:var(--accent)">'+esc(fmt(O.usd,'USD'))+'</div><div class="s">oficial $ '+Number(O.rate).toLocaleString('es-AR')+'</div></div>'+
     '<div class="card kpi"><small>Física · Virtual</small><div class="v" style="font-size:1.1rem">💵 '+esc(fmt(A.fis))+'<br>📱 '+esc(fmt(A.vir))+'</div><div class="s">efectivo · bancos y billeteras</div></div>'+
-    '<div class="card kpi"><small>Patrimonio total</small><div class="v" style="color:var(--accent2)">'+esc(fmt(A.tot+sv))+'</div><div class="s">cuentas + ahorro + inversión</div></div>';
+    '<div class="card kpi"><small>Patrimonio neto</small><div class="v" style="color:var(--accent2)">'+esc(fmt(netWorth()))+'</div><div class="s">lo que tenés menos lo que debés</div></div>';
   $('acctList').innerHTML=acctsSorted().map(function(a){return acctRowHtml(a,true);}).join('');
   pie($('pieAcct'),S.accts.map(function(a){return{n:a.n,v:conv(acctBal(a),a.cur,S.cur,ofiRate())};}),'Con saldo');
   $('aFormTitle').textContent=aState.edit?'✏️ Editar cuenta':'➕ Nueva cuenta o billetera';
@@ -985,7 +1098,7 @@ function aClear(){aState.edit=null;$('aEmoji').value='';$('aName').value='';$('a
 $('acctList').onclick=function(e){
   var d=e.target.dataset,a;
   if(d.adef&&acctById(d.adef)){S.defAcct=d.adef;save();render();toast('Cuenta por defecto actualizada');}
-  if(d.aed&&(a=acctById(d.aed))){aState.edit=a.id;$('aEmoji').value=a.e;$('aName').value=a.n;$('aKind').value=a.k;$('aCur').value=a.cur;$('aBal').value=Math.round(acctBal(a)*100)/100;renderCuentas();$('aName').focus();}
+  if(d.aed&&(a=acctById(d.aed))){aState.edit=a.id;$('aEmoji').value=a.e;$('aName').value=a.n;$('aKind').value=a.k;$('aCur').value=a.cur;$('aBal').value=Math.round((a.k==='credito'?Math.abs(acctBal(a)):acctBal(a))*100)/100;renderCuentas();$('aName').focus();}
   if(d.adel&&(a=acctById(d.adel))){
     if(S.accts.length<2){toast('Tiene que quedar al menos una cuenta');return;}
     var rest=S.accts.filter(function(x){return x.id!==a.id;}),dest=rest[0];
@@ -1002,12 +1115,68 @@ $('aSave').onclick=function(){
   if(S.accts.some(function(x){return x.id!==aState.edit&&norm(x.n)===norm(name);})){toast('Ya existe una cuenta con ese nombre');return;}
   var a=aState.edit?acctById(aState.edit):null,was=!!a;
   if(!a){a={id:'a'+Date.now().toString(36),ini:0};S.accts.push(a);}
-  a.n=name;a.e=$('aEmoji').value.trim()||'👛';a.k=$('aKind').value;a.cur=$('aCur').value;
+  a.n=name;a.e=$('aEmoji').value.trim()||($('aKind').value==='credito'?'💳':'👛');a.k=$('aKind').value;a.cur=$('aCur').value;
+  if(a.k==='credito')bal=-Math.abs(bal);   // en una tarjeta, el saldo cargado es lo que se debe
   a.ini=(Number(a.ini)||0)+(bal-acctBal(a));   // ajusta el saldo inicial para que el saldo actual sea el ingresado
   aClear();save();render();toast(was?'Cuenta actualizada':'Cuenta agregada');
 };
 $('aCancel').onclick=function(){aClear();renderCuentas();};
 $('trBtn').onclick=function(){if(S.accts.length<2){toast('Necesitás al menos dos cuentas');return;}openModal({type:'transfer'});};
+
+/* ---------- Planificación: fijos, cuotas, topes y deudas ---------- */
+function spentByCat(){var r={};monthTx(view.y,view.m).forEach(function(t){if(t.type==='gasto')r[t.cat]=(r[t.cat]||0)+val(t);});return r;}
+function renderPlan(){
+  var RT=recTotals(),D=debtTotals(),A=acctTotals(),sp=spentByCat(),cm=commitments();
+  $('planKpis').innerHTML=
+    '<div class="card kpi"><small>Gastos fijos por mes</small><div class="v neg">'+esc(fmt(RT.fijos))+'</div><div class="s">se repiten todos los meses</div></div>'+
+    '<div class="card kpi"><small>Cuotas por mes</small><div class="v wrn">'+esc(fmt(RT.cuotas))+'</div><div class="s">compras en cuotas activas</div></div>'+
+    '<div class="card kpi"><small>Debo</small><div class="v neg">'+esc(fmt(D.debo+A.deuda))+'</div><div class="s">deudas + tarjetas</div></div>'+
+    '<div class="card kpi"><small>Me deben</small><div class="v pos">'+esc(fmt(D.med))+'</div><div class="s">préstamos a cobrar</div></div>';
+  $('planNext').innerHTML=S.rec.some(function(x){return x.type==='gasto';})?'<div class="tblwrap"><table class="tbl"><tr><th>Mes</th><th class="r">Fijos</th><th class="r">Cuotas</th><th class="r">Total comprometido</th></tr>'+
+    cm.map(function(o){return '<tr><td>'+o.l+'</td><td class="r">'+esc(fmt(o.f))+'</td><td class="r">'+esc(fmt(o.c))+'</td><td class="r"><b>'+esc(fmt(o.f+o.c))+'</b></td></tr>';}).join('')+'</table></div>'
+    :'<div class="empty">Cuando cargues gastos fijos o compras en cuotas, acá vas a ver cuánto tenés comprometido cada mes.</div>';
+  $('budList').innerHTML=CATS.gasto.slice().sort(function(a,b){return (sp[b.id]||0)-(sp[a.id]||0);}).map(function(c){
+    var b=S.bud[c.id],lim=b?conv(b.amt,b.cur,S.cur,S.rate):0,v=sp[c.id]||0,pc=lim>0?v/lim*100:0;
+    return '<div class="prow"><span>'+esc(c.e)+'</span><div class="n"><b>'+esc(c.n)+'</b><small>Gastado: '+esc(fmt(v))+(lim>0?' · '+Math.round(pc)+'% del tope':'')+'</small></div>'+
+      '<input type="number" inputmode="decimal" step="any" placeholder="Sin tope" data-bud="'+esc(c.id)+'" value="'+(lim>0?Math.round(lim*100)/100:'')+'" aria-label="Tope de '+esc(c.n)+'">'+
+      (lim>0?'<div class="track"><div class="fill" style="width:'+Math.min(100,pc)+'%;background:'+(pc>100?'var(--bad)':pc>=80?'var(--warn)':'var(--ok)')+'"></div></div>':'')+'</div>';}).join('');
+  $('recList').innerHTML=S.rec.length?S.rec.slice().sort(function(a,b){return conv(b.amt,b.cur,'ARS',S.rate)-conv(a.amt,a.cur,'ARS',S.rate);}).map(function(r){
+    var a=acctById(r.acct),c=catOf(r);
+    return '<div class="prow"><span>'+esc(c.e)+'</span><div class="n"><b>'+esc(r.desc)+'</b><small>'+TYPE_LBL[r.type]+' · día '+r.day+' · '+esc(a?a.n:'—')+' · '+(r.n?'cuota '+r.k+' de '+r.n+' pagada':'todos los meses')+' · '+r.cur+'</small></div>'+
+      '<input type="number" inputmode="decimal" step="any" data-recamt="'+esc(r.id)+'" value="'+r.amt+'" aria-label="Monto de '+esc(r.desc)+'"><button data-recdel="'+esc(r.id)+'" aria-label="Eliminar">🗑️</button></div>';}).join('')
+    :'<div class="empty">Todavía no tenés gastos fijos ni cuotas.</div>';
+  $('debtList').innerHTML=S.debts.length?S.debts.slice().sort(function(a,b){return conv(b.amt,b.cur,'ARS',S.rate)-conv(a.amt,a.cur,'ARS',S.rate);}).map(function(d){
+    return '<div class="prow"><span>'+(d.dir==='medeben'?'📥':'📤')+'</span><div class="n"><b>'+esc(d.name)+'</b><small>'+(d.dir==='medeben'?'Me deben':'Yo debo')+' · '+d.cur+(d.due?' · vence '+esc(d.due.split('-').reverse().join('/')):'')+'</small></div>'+
+      '<input type="number" inputmode="decimal" step="any" data-debtamt="'+esc(d.id)+'" value="'+d.amt+'" aria-label="Monto pendiente con '+esc(d.name)+'"><button data-debtdel="'+esc(d.id)+'" aria-label="Eliminar">🗑️</button></div>';}).join('')
+    :'<div class="empty">Sin deudas ni préstamos cargados.</div>';
+}
+$('budList').onchange=function(e){var id=e.target.dataset.bud;if(!id)return;var v=parseFloat(e.target.value);if(v>0)S.bud[id]={amt:v,cur:S.cur};else delete S.bud[id];save();render();};
+$('recList').onchange=function(e){var id=e.target.dataset.recamt;if(!id)return;var v=parseFloat(e.target.value),r=S.rec.filter(function(x){return x.id===id;})[0];
+  if(r&&v>0){r.amt=v;save();render();toast('Monto actualizado para los próximos meses');}else render();};
+$('recList').onclick=function(e){var id=e.target.dataset.recdel;if(!id)return;
+  if(confirm('¿Dejar de repetir este movimiento? Los que ya se registraron no se borran.')){S.rec=S.rec.filter(function(x){return x.id!==id;});save();render();}};
+$('debtList').onchange=function(e){var id=e.target.dataset.debtamt;if(!id)return;var v=parseFloat(e.target.value),d=S.debts.filter(function(x){return x.id===id;})[0];
+  if(d&&v>0){d.amt=v;save();render();}else if(d&&v===0&&confirm('¿Marcar como saldada y quitarla de la lista?')){S.debts=S.debts.filter(function(x){return x.id!==id;});save();render();}else render();};
+$('debtList').onclick=function(e){var id=e.target.dataset.debtdel;if(id&&confirm('¿Eliminar esta deuda de la lista?')){S.debts=S.debts.filter(function(x){return x.id!==id;});save();render();}};
+$('dAdd').onclick=function(){var n=$('dName').value.trim(),a=parseFloat($('dAmt').value);if(!n||!(a>0)){toast('Completá con quién y el monto');return;}
+  S.debts.push({id:'d'+Date.now().toString(36),name:n,amt:a,cur:$('dCur').value,dir:$('dDir').value,due:$('dDue').value||''});
+  $('dName').value='';$('dAmt').value='';$('dDue').value='';save();render();toast('Agregado');};
+function planReportHtml(){
+  var h='',sp=spentByCat(),bud=CATS.gasto.filter(function(c){return S.bud[c.id];}),RT=recTotals(),D=debtTotals(),A=acctTotals();
+  if(bud.length)h+='<div class="card"><h3>🎯 Topes por categoría</h3><div class="tblwrap"><table class="tbl"><tr><th>Categoría</th><th class="r">Tope</th><th class="r">Gastado</th><th class="r">Uso</th><th>Estado</th></tr>'+
+    bud.map(function(c){var lim=conv(S.bud[c.id].amt,S.bud[c.id].cur,S.cur,S.rate),v=sp[c.id]||0,pc=lim>0?v/lim*100:0;
+      return '<tr><td>'+esc(c.n)+'</td><td class="r">'+esc(fmt(lim))+'</td><td class="r">'+esc(fmt(v))+'</td><td class="r">'+Math.round(pc)+'%</td><td>'+(pc>100?'⚠️ Excedido':pc>=80?'⚠️ Cerca del tope':'✅ En regla')+'</td></tr>';}).join('')+'</table></div></div>';
+  if(S.rec.length||S.debts.length||A.deuda>0){
+    h+='<div class="card"><h3>📅 Compromisos y deudas</h3><div class="tblwrap"><table class="tbl"><tr><th>Concepto</th><th class="r">Monto</th></tr>'+
+      '<tr><td>Gastos fijos por mes</td><td class="r">'+esc(fmt(RT.fijos))+'</td></tr><tr><td>Cuotas por mes</td><td class="r">'+esc(fmt(RT.cuotas))+'</td></tr>'+
+      '<tr><td>Deuda en tarjetas de crédito</td><td class="r">'+esc(fmt(A.deuda))+'</td></tr><tr><td>Otras deudas (yo debo)</td><td class="r">'+esc(fmt(D.debo))+'</td></tr>'+
+      '<tr><td>Me deben</td><td class="r">'+esc(fmt(D.med))+'</td></tr><tr class="tot"><td>Patrimonio neto</td><td class="r">'+esc(fmt(netWorth()))+'</td></tr></table></div>';
+    if(S.rec.some(function(x){return x.type==='gasto';}))h+='<h4>Próximos 6 meses</h4><div class="tblwrap"><table class="tbl"><tr><th>Mes</th><th class="r">Fijos</th><th class="r">Cuotas</th><th class="r">Total</th></tr>'+
+      commitments().map(function(o){return '<tr><td>'+o.l+'</td><td class="r">'+esc(fmt(o.f))+'</td><td class="r">'+esc(fmt(o.c))+'</td><td class="r">'+esc(fmt(o.f+o.c))+'</td></tr>';}).join('')+'</table></div>';
+    h+='</div>';
+  }
+  return h;
+}
 
 /* ---------- Reporte (pantalla, PDF e IA) ---------- */
 function ymKey(){return view.y+'-'+String(view.m+1).padStart(2,'0');}
@@ -1052,7 +1221,7 @@ function renderReport(){
     row('Ingresos',T.inc,PT.inc)+row('Necesidades',T.n,PT.n)+row('Gustos',T.w,PT.w)+row('Gastos totales',T.exp,PT.exp)+row('Ahorro',T.sav,PT.sav)+row('Inversión',T.inv,PT.inv)+
     '<tr class="tot"><td>Disponible del mes</td><td class="r">'+esc(fmt(T.free))+'</td><td class="r">'+esc(fmt(PT.free))+'</td><td class="r"></td></tr></table></div></div>';
   h+='<div class="card"><h3>💼 Cuentas y billeteras</h3><div class="tblwrap"><table class="tbl"><tr><th>Cuenta</th><th>Tipo</th><th class="r">Saldo</th><th class="r">En '+S.cur+'</th></tr>'+
-    acctsSorted().map(function(a){var b=acctBal(a);return '<tr><td>'+esc(a.e)+' '+esc(a.n)+'</td><td>'+(a.k==='fisica'?'Física':'Virtual')+'</td><td class="r">'+esc(fmt(b,a.cur))+'</td><td class="r">'+esc(fmt(conv(b,a.cur,S.cur,ofiRate())))+'</td></tr>';}).join('')+
+    acctsSorted().map(function(a){var b=acctBal(a);return '<tr><td>'+esc(a.e)+' '+esc(a.n)+'</td><td>'+kindLbl(a)+'</td><td class="r">'+esc(fmt(b,a.cur))+'</td><td class="r">'+esc(fmt(conv(b,a.cur,S.cur,ofiRate())))+'</td></tr>';}).join('')+
     '<tr><td colspan="3">Subtotal física</td><td class="r">'+esc(fmt(A.fis))+'</td></tr><tr><td colspan="3">Subtotal virtual</td><td class="r">'+esc(fmt(A.vir))+'</td></tr>'+
     '<tr class="tot"><td colspan="3">Total disponible</td><td class="r">'+esc(fmt(A.tot))+'</td></tr>'+
     '<tr class="tot"><td colspan="3">Disponible en pesos (dólar oficial)</td><td class="r">'+esc(fmt(O.ars,'ARS'))+'</td></tr>'+
@@ -1064,6 +1233,7 @@ function renderReport(){
     h+='<div class="card"><h3>📊 Regla '+P.n+'/'+P.w+'/'+P.s+'</h3><div class="tblwrap"><table class="tbl"><tr><th>Rubro</th><th class="r">Objetivo</th><th class="r">Real</th><th class="r">% ingreso</th><th>Estado</th></tr>'+
       r2('Necesidades',P.n,T.n,false)+r2('Gustos',P.w,T.w,false)+r2('Ahorro e inversión',P.s,T.s,true)+'</table></div></div>';
   }
+  h+=planReportHtml();
   var g=monthTx(view.y,view.m).filter(function(t){return t.type==='gasto';}),isCur=view.y===now.getFullYear()&&view.m===now.getMonth();
   var dim=new Date(view.y,view.m+1,0).getDate(),day=isCur?new Date().getDate():dim,maxT=null,byDay={};
   g.forEach(function(t){if(!maxT||val(t)>val(maxT))maxT=t;byDay[t.date]=(byDay[t.date]||0)+val(t);});
@@ -1164,7 +1334,7 @@ $('expXlsx').onclick=function(){
   var res=[['Mes','Ingresos ('+cur+')','Necesidades','Gustos','Gastos totales','Ahorro','Inversión','Disponible','Tasa de ahorro %']].concat(Object.keys(months).sort().map(function(k){
     var p=k.split('-'),T=totals(+p[0],+p[1]-1);return [p[1]+'/'+p[0],r2n(T.inc),r2n(T.n),r2n(T.w),r2n(T.exp),r2n(T.sav),r2n(T.inv),r2n(T.free),T.inc>0?r2n(T.s/T.inc*100):0];}));
   var T=totals(view.y,view.m),cats=[['Categoría ('+monthLabel()+')','Tipo','Monto ('+cur+')','% del gasto']].concat(catRows().map(function(c){return [c.n,c.g==='N'?'Necesidad':'Gusto',r2n(c.v),T.exp>0?r2n(c.v/T.exp*100):0];}));
-  var A=acctTotals(),acc=[['Cuenta','Tipo','Moneda','Saldo','Saldo en '+cur]].concat(S.accts.map(function(a){var b=acctBal(a);return [a.n,a.k==='fisica'?'Física':'Virtual',a.cur,r2n(b),r2n(conv(b,a.cur,cur,ofiRate()))];}));
+  var A=acctTotals(),acc=[['Cuenta','Tipo','Moneda','Saldo','Saldo en '+cur]].concat(S.accts.map(function(a){var b=acctBal(a);return [a.n,kindLbl(a),a.cur,r2n(b),r2n(conv(b,a.cur,cur,ofiRate()))];}));
   acc.push(['Subtotal física','','','',r2n(A.fis)],['Subtotal virtual','','','',r2n(A.vir)],['Total disponible','','','',r2n(A.tot)]);
   var bytes=buildXlsx([{name:'Movimientos',rows:mov,widths:[12,14,24,34,20,20,14,9,12,16]},{name:'Resumen mensual',rows:res,widths:[10,16,14,14,16,14,14,14,16]},
     {name:'Categorias del mes',rows:cats,widths:[34,14,16,14]},{name:'Cuentas',rows:acc,widths:[26,12,10,16,16]}]);
@@ -1188,6 +1358,9 @@ function aiData(){
     gastosPorCategoria:catRows().map(function(c){return{categoria:c.n,tipo:c.g==='N'?'necesidad':'gusto',monto:r2n(c.v)};}),
     cuentas:S.accts.map(function(a){return{nombre:a.n,tipo:a.k,moneda:a.cur,saldo:r2n(acctBal(a))};}),
     acumulado:{ahorro:r2n(sum(sav,valNow)),inversion:r2n(sum(inv,valNow)),fondoEmergencia:r2n(sum(sav.filter(function(t){return t.cat==='emergencia';}),valNow)),mesesObjetivoFondo:S.emMonths},
+    gastosFijosMensuales:r2n(recTotals().fijos),cuotasMensuales:r2n(recTotals().cuotas),deudaEnTarjetas:r2n(acctTotals().deuda),
+    deudas:S.debts.map(function(d){return{con:d.name,monto:d.amt,moneda:d.cur,tipo:d.dir==='medeben'?'me deben':'debo',vence:d.due||null};}),
+    topesPorCategoria:CATS.gasto.filter(function(c){return S.bud[c.id];}).map(function(c){return{categoria:c.n,tope:S.bud[c.id].amt,moneda:S.bud[c.id].cur};}),
     costoDeVida:(function(){var v=livingInfo();return{mensual:r2n(v.exp),soloNecesidades:r2n(v.nec),esEstimacionDelMesEnCurso:v.est,mesesQueAlcanzaElDisponible:v.meses==null?null:r2n(v.meses)};})(),
     metas:S.goals.map(function(g){return{nombre:g.name,objetivo:g.amt,moneda:g.cur};}),cantidadMovimientos:monthTx(view.y,view.m).length};
 }
@@ -1243,7 +1416,7 @@ function emergInfo(){
   var avgN=needs.length?sum(needs,function(v){return v;})/needs.length:0,em=sum(S.tx.filter(function(t){return t.type==='ahorro'&&t.cat==='emergencia';}),valNow);
   return{avgN:avgN,em:em,months:avgN?em/avgN:0,target:avgN*S.emMonths};
 }
-function liqInfo(){var r={cash:0,liq:0,neg:0};S.accts.forEach(function(a){var b=acctBal(a);if(b<-0.005)r.neg++;if(a.cur==='ARS'&&b>0){r.liq+=b;if(a.k==='fisica')r.cash+=b;}});return r;}
+function liqInfo(){var r={cash:0,liq:0,neg:0};S.accts.forEach(function(a){if(a.k==='credito')return;var b=acctBal(a);if(b<-0.005)r.neg++;if(a.cur==='ARS'&&b>0){r.liq+=b;if(a.k==='fisica')r.cash+=b;}});return r;}
 function renderWhatIf(){
   var T=totals(view.y,view.m),E=emergInfo(),a=+$('wCut').value,b=+$('nCut').value,c=+$('iUp').value;
   $('wCutV').textContent=a;$('nCutV').textContent=b;$('iUpV').textContent=c;
@@ -1302,7 +1475,7 @@ function renderEstrategia(){
   if(PT.inc>0&&S.inf>0){var gI=(T.inc-PT.inc)/PT.inc*100;if(gI<S.inf)idea(T.inc*(S.inf-gI)/100*12,'📈','Tu ingreso corre detrás de la inflación','Respecto del mes anterior tu ingreso varió '+gI.toFixed(1)+'% contra una inflación estimada de '+S.inf+'%. Esa diferencia es pérdida de poder de compra: llevá el número a la próxima negociación.');}
   var sv=sum(S.tx.filter(function(t){return t.type==='ahorro'||t.type==='inversion';}),function(t){return conv(t.amt,t.cur,'ARS',ofiRate());}),usd=0,tot=sv;
   S.tx.forEach(function(t){if((t.type==='ahorro'||t.type==='inversion')&&t.cur==='USD')usd+=conv(t.amt,'USD','ARS',ofiRate());});
-  S.accts.forEach(function(a){var b=conv(acctBal(a),a.cur,'ARS',ofiRate());tot+=b;if(a.cur==='USD')usd+=b;});
+  S.accts.forEach(function(a){if(a.k==='credito')return;var b=conv(acctBal(a),a.cur,'ARS',ofiRate());tot+=b;if(a.cur==='USD')usd+=b;});
   if(tot>0)idea(0,'⚖️','Decidí tu mezcla de monedas','Hoy el <b>'+(usd/tot*100).toFixed(0)+'%</b> de lo que tenés registrado está en dólares y el resto en pesos. No hay un número correcto, pero conviene que sea una decisión tuya y no una casualidad: fijá un objetivo y revisalo cada tres meses.');
   idea(0,'⏳','Regla de las 24 horas','Para cualquier compra no planificada mayor a '+esc(fmt(T.inc*0.05))+' (5% de tu ingreso), esperá un día antes de pagar. La mayoría de los impulsos no sobrevive a la espera.');
   ideas.sort(function(a,b){return b.imp-a.imp;});
@@ -1329,9 +1502,12 @@ function syncInputs(){
 function render(){
   var ml=new Date(view.y,view.m,1).toLocaleDateString('es-AR',{month:'long',year:'numeric'});$('mLabel').textContent=ml.charAt(0).toUpperCase()+ml.slice(1);
   Array.prototype.forEach.call($('curPill').children,function(b){b.classList.toggle('on',b.dataset.cur===S.cur);});
-  renderInicio();renderMovs();renderCalc();renderMetas();renderCats();renderCuentas();renderReport();renderEstrategia();
+  renderInicio();renderMovs();renderCalc();renderMetas();renderCats();renderCuentas();renderReport();renderEstrategia();renderPlan();
 }
-applyTheme();syncInputs();$('cCur').value=S.cur;aiHint();render();
+applyTheme();syncInputs();$('cCur').value=S.cur;aiHint();
+var recMade=applyRecurring();render();bkInfo();
+if(window.AndroidVoz&&AndroidVoz.respaldo)$('bkNow').hidden=false;
+if(recMade)setTimeout(function(){toast('📅 Registré '+recMade+(recMade===1?' movimiento fijo':' movimientos fijos o cuotas'));},600);
 if(!S.rateAt||!S.ofiAt||Date.now()-Math.min(S.rateAt,S.ofiAt)>6*3600*1000)fetchRate(true);
 })();
 </script>

@@ -3,9 +3,12 @@ package ar.misgastos.app;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintManager;
@@ -23,6 +26,8 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -163,6 +168,49 @@ public class MainActivity extends Activity {
                     pedirDestino(nombre, mime);
                 }
             });
+        }
+
+        /** Respaldo automático: reemplaza una copia fija en Descargas/MisGastos (o en la carpeta de la app en Android 9 o anterior). */
+        @JavascriptInterface
+        public void respaldo(final String json) {
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        byte[] datos = json.getBytes("UTF-8");
+                        String donde;
+                        if (Build.VERSION.SDK_INT >= 29) {
+                            SharedPreferences sp = getSharedPreferences("misgastos", MODE_PRIVATE);
+                            String guardada = sp.getString("respaldoUri", null);
+                            OutputStream o = null;
+                            if (guardada != null) {
+                                try { o = getContentResolver().openOutputStream(Uri.parse(guardada), "wt"); } catch (Exception e) { o = null; }
+                            }
+                            if (o == null) {
+                                ContentValues v = new ContentValues();
+                                v.put("_display_name", "mis-gastos-respaldo.json");
+                                v.put("mime_type", "application/json");
+                                v.put("relative_path", "Download/MisGastos");
+                                Uri u = getContentResolver().insert(Uri.parse("content://media/external/downloads"), v);
+                                o = getContentResolver().openOutputStream(u, "wt");
+                                sp.edit().putString("respaldoUri", u.toString()).apply();
+                            }
+                            o.write(datos);
+                            o.close();
+                            donde = "Descargas/MisGastos/mis-gastos-respaldo.json";
+                        } else {
+                            File dir = new File(getExternalFilesDir(null), "respaldos");
+                            dir.mkdirs();
+                            FileOutputStream f = new FileOutputStream(new File(dir, "mis-gastos-respaldo.json"));
+                            f.write(datos);
+                            f.close();
+                            donde = "Android/data/ar.misgastos.app/files/respaldos";
+                        }
+                        js("window.__respaldoOk(" + JSONObject.quote(donde) + ")");
+                    } catch (Exception e) {
+                        js("window.__respaldoErr()");
+                    }
+                }
+            }).start();
         }
 
         /** Abre el diálogo de impresión del sistema: ahí se elige "Guardar como PDF". */
