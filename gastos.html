@@ -163,34 +163,33 @@ label{display:block;font-size:.8rem;color:var(--muted);font-weight:600;margin:10
       <button data-v="inicio" class="on">🏠 Inicio</button>
       <button data-v="movs">📋 Movimientos</button>
       <button data-v="cuentas">💼 Cuentas</button>
-      <button data-v="calc">🧮 50/30/20</button>
-      <button data-v="metas">🎯 Ahorro e inversión</button>
       <button data-v="reporte">📄 Reportes</button>
+      <button data-v="metas">🎯 Ahorro e inversión</button>
+      <button data-v="calc">🧮 50/30/20</button>
       <button data-v="ajustes">⚙️ Ajustes</button>
     </nav>
   </div>
 </header>
 
 <main class="wrap">
-<!-- INICIO -->
+<!-- INICIO: ordenado de lo más importante a lo menos -->
 <section class="view on" id="v-inicio">
-  <div class="card" style="margin-bottom:14px">
-    <div class="quick">
-      <input id="quickTxt" placeholder='Decí o escribí: "gasté 15 mil en supermercado"' autocomplete="off">
-      <button class="btn" id="quickGo">Agregar</button>
-    </div>
-    <div class="hint">🎙️ Tocá el micrófono y hablá natural: <i>“cobré 900 mil de sueldo”</i>, <i>“gasté 8500 en nafta”</i>, <i>“ahorré 100 dólares”</i>, <i>“invertí 50 lucas en plazo fijo”</i>.</div>
-    <div class="actions"><button class="btn" id="pdfHome">📄 Exportar a PDF</button><button class="btn ghost" id="xlsHome">📊 Exportar a Excel</button></div>
-  </div>
-  <div class="grid kpis" id="kpis"></div>
-  <div class="card" style="margin-top:14px"><h3>💼 Mi plata hoy</h3><div id="homeAccts"></div></div>
+  <div class="card"><h3>💼 Mi plata hoy</h3><div id="homeAccts"></div></div>
+  <div class="grid kpis" id="kpis" style="margin-top:14px"></div>
+  <div class="card" style="margin-top:14px"><h3>🤖 Tu asistente</h3><div class="tips" id="tips"></div></div>
+  <div class="card" style="margin-top:14px"><h3>📊 Tu mes vs. regla <span id="ruleLbl"></span></h3><div id="ruleBars"></div></div>
   <div class="grid two" style="margin-top:14px">
     <div class="card"><h3>🥧 Gastos por categoría</h3><div class="pie" id="pieCat"></div></div>
     <div class="card"><h3>🥧 A dónde va tu ingreso</h3><div class="pie" id="pieDist"></div></div>
   </div>
-  <div class="grid two" style="margin-top:14px">
-    <div class="card"><h3>📊 Tu mes vs. regla <span id="ruleLbl"></span></h3><div id="ruleBars"></div></div>
-    <div class="card"><h3>🤖 Tu asistente</h3><div class="tips" id="tips"></div></div>
+  <div class="card" style="margin-top:14px">
+    <h3>⚡ Carga rápida y exportación</h3>
+    <div class="quick">
+      <input id="quickTxt" placeholder='Decí o escribí: "gasté 15 mil en supermercado"' autocomplete="off">
+      <button class="btn" id="quickGo">Agregar</button>
+    </div>
+    <div class="hint">🎙️ También podés tocar el micrófono y hablar natural: <i>“cobré 900 mil de sueldo”</i>, <i>“gasté 8500 en nafta con mercado pago”</i>, <i>“ahorré 100 dólares”</i>, <i>“pasé 50 mil de banco a efectivo”</i>.</div>
+    <div class="actions"><button class="btn" id="pdfHome">📄 Exportar a PDF</button><button class="btn ghost" id="xlsHome">📊 Exportar a Excel</button></div>
   </div>
 </section>
 
@@ -481,6 +480,7 @@ function acctTotals(){var r={fis:0,vir:0,tot:0};S.accts.forEach(function(a){var 
 function ofiRate(){return S.ofi>0?S.ofi:S.rate;}   // dólar oficial (si todavía no se obtuvo, la cotización de Ajustes)
 function availOfi(){var o=ofiRate(),ars=0;S.accts.forEach(function(a){ars+=conv(acctBal(a),a.cur,'ARS',o);});return{ars:ars,usd:ars/o,rate:o};}
 function ofiNote(){return 'Dólar oficial: $ '+Number(ofiRate()).toLocaleString('es-AR')+(S.ofi>0?(S.ofiAt?' · actualizado el '+new Date(S.ofiAt).toLocaleString('es-AR'):' · cargado a mano'):' · todavía sin actualizar: se usa la cotización de Ajustes');}
+function acctsSorted(){var o=ofiRate();return S.accts.slice().sort(function(a,b){return conv(acctBal(b),b.cur,'ARS',o)-conv(acctBal(a),a.cur,'ARS',o);});}   // de mayor a menor saldo
 function acctLbl(t){var a=acctById(t.acct),b=t.type==='transfer'?acctById(t.to):null;return (a?a.n:'—')+(b?' → '+b.n:'');}
 function dfltCat(l){for(var i=0;i<l.length;i++)if(!(l[i].k&&l[i].k.length))return l[i];return l[l.length-1];}
 migrate();
@@ -666,10 +666,10 @@ function renderInicio(){
   var T=totals(view.y,view.m),P=S.pct;
   var rate=T.inc>0?T.s/T.inc*100:0;
   $('kpis').innerHTML=
-    '<div class="card kpi"><small>Ingresos</small><div class="v pos">'+esc(fmt(T.inc))+'</div><div class="s">del mes</div></div>'+
+    '<div class="card kpi"><small>Disponible</small><div class="v '+(T.free<0?'neg':'')+'">'+esc(fmt(T.free))+'</div><div class="s">sin asignar · ≈ '+esc(S.cur==='ARS'?fmt(T.free/ofiRate(),'USD'):fmt(T.free*ofiRate(),'ARS'))+'</div></div>'+
     '<div class="card kpi"><small>Gastos</small><div class="v neg">'+esc(fmt(T.exp))+'</div><div class="s">'+(T.inc>0?Math.round(T.exp/T.inc*100)+'% del ingreso':'necesidades + gustos')+'</div></div>'+
-    '<div class="card kpi"><small>Ahorro + inversión</small><div class="v" style="color:var(--accent)">'+esc(fmt(T.s))+'</div><div class="s">tasa de ahorro '+rate.toFixed(0)+'%</div></div>'+
-    '<div class="card kpi"><small>Disponible</small><div class="v '+(T.free<0?'neg':'')+'">'+esc(fmt(T.free))+'</div><div class="s">sin asignar · ≈ '+esc(S.cur==='ARS'?fmt(T.free/ofiRate(),'USD'):fmt(T.free*ofiRate(),'ARS'))+'</div></div>';
+    '<div class="card kpi"><small>Ingresos</small><div class="v pos">'+esc(fmt(T.inc))+'</div><div class="s">del mes</div></div>'+
+    '<div class="card kpi"><small>Ahorro + inversión</small><div class="v" style="color:var(--accent)">'+esc(fmt(T.s))+'</div><div class="s">tasa de ahorro '+rate.toFixed(0)+'%</div></div>';
   // torta por categoría
   var A=acctTotals();
   var O=availOfi();
@@ -677,7 +677,7 @@ function renderInicio(){
     '<div style="border-color:var(--accent)"><small>Disponible en dólares</small><b>'+esc(fmt(O.usd,'USD'))+'</b></div>'+
     '<div style="border-color:var(--accent2)"><small>Física · Virtual</small><b style="font-size:1rem">💵 '+esc(fmt(A.fis))+'</b><b style="font-size:1rem">📱 '+esc(fmt(A.vir))+'</b></div></div>'+
     '<div class="hint">Es el mismo total expresado en cada moneda. '+esc(ofiNote())+'.</div>'+
-    '<div class="list" style="margin-top:12px">'+S.accts.map(function(a){return acctRowHtml(a,false);}).join('')+'</div>';
+    '<div class="list" style="margin-top:12px">'+acctsSorted().map(function(a){return acctRowHtml(a,false);}).join('')+'</div>';
   var by={};monthTx(view.y,view.m).forEach(function(t){if(t.type!=='gasto')return;var c=catOf(t);by[c.n]=(by[c.n]||0)+val(t);});
   pie($('pieCat'),Object.keys(by).map(function(k){return{n:k,v:by[k]};}),'Gastos');
   pie($('pieDist'),[{n:'Necesidades',v:T.n,c:'#4f8cff'},{n:'Gustos',v:T.w,c:'#ffb648'},{n:'Ahorro',v:T.sav,c:'#2fd08a'},{n:'Inversión',v:T.inv,c:'#7c5cff'},{n:'Sin asignar',v:Math.max(0,T.free),c:'#94a3b8'}],T.inc>0?'Ingreso':'Total');
@@ -697,7 +697,7 @@ function acctRowHtml(a,ed){
 }
 function renderTips(T){$('tips').innerHTML=tipsHtml(T);}
 function tipsHtml(T){
-  var tips=[],P=S.pct,add=function(k,i,h){tips.push('<div class="tip '+k+'">'+i+'<div>'+h+'</div></div>');};
+  var tips=[],P=S.pct,add=function(k,i,h){tips.push({w:{bad:0,warn:1,'':2,ok:3}[k],n:tips.length,h:'<div class="tip '+k+'">'+i+'<div>'+h+'</div></div>'});};
   var isCur=view.y===now.getFullYear()&&view.m===now.getMonth();
   var dim=new Date(view.y,view.m+1,0).getDate(),day=isCur?new Date().getDate():dim,left=dim-day+1;
   if(T.inc<=0){
@@ -736,7 +736,7 @@ function tipsHtml(T){
   if(cash>0&&S.inf>0)add('warn','💵','Tenés <b>'+esc(fmt(cash,'ARS'))+'</b> en efectivo. Con una inflación de '+S.inf+'% mensual pierde unos <b>'+esc(fmt(cash*S.inf/100,'ARS'))+' por mes</b>. Dejá en mano solo lo de la semana.');
   var needM=T.n>0?conv(T.n,S.cur,'ARS',S.rate):0;
   if(needM>0&&liq>needM*1.5)add('','🏦','Tenés <b>'+esc(fmt(liq,'ARS'))+'</b> en pesos disponibles, más de lo que gastás en necesidades en un mes. El excedente (unos '+esc(fmt(liq-needM,'ARS'))+') rinde más en una cuenta remunerada o un FCI money market, o sumándolo a tu fondo de emergencia.');
-  return tips.join('');
+  return tips.sort(function(a,b){return a.w-b.w||a.n-b.n;}).map(function(t){return t.h;}).join('');   // alertas primero, logros al final
 }
 function renderMovs(){
   var q=norm(view.q),l=monthTx(view.y,view.m).filter(function(t){
@@ -920,7 +920,7 @@ function renderCuentas(){
     '<div class="card kpi"><small>Disponible en dólares</small><div class="v" style="color:var(--accent)">'+esc(fmt(O.usd,'USD'))+'</div><div class="s">oficial $ '+Number(O.rate).toLocaleString('es-AR')+'</div></div>'+
     '<div class="card kpi"><small>Física · Virtual</small><div class="v" style="font-size:1.1rem">💵 '+esc(fmt(A.fis))+'<br>📱 '+esc(fmt(A.vir))+'</div><div class="s">efectivo · bancos y billeteras</div></div>'+
     '<div class="card kpi"><small>Patrimonio total</small><div class="v" style="color:var(--accent2)">'+esc(fmt(A.tot+sv))+'</div><div class="s">cuentas + ahorro + inversión</div></div>';
-  $('acctList').innerHTML=S.accts.map(function(a){return acctRowHtml(a,true);}).join('');
+  $('acctList').innerHTML=acctsSorted().map(function(a){return acctRowHtml(a,true);}).join('');
   pie($('pieAcct'),S.accts.map(function(a){return{n:a.n,v:conv(acctBal(a),a.cur,S.cur,ofiRate())};}),'Con saldo');
   $('aFormTitle').textContent=aState.edit?'✏️ Editar cuenta':'➕ Nueva cuenta o billetera';
   $('aSave').textContent=aState.edit?'Guardar cambios':'Agregar cuenta';$('aCancel').hidden=!aState.edit;
@@ -995,6 +995,13 @@ function renderReport(){
     '<div class="tblwrap"><table class="tbl"><tr><th>Concepto</th><th class="r">Este mes</th><th class="r">Mes anterior</th><th class="r">Variación</th></tr>'+
     row('Ingresos',T.inc,PT.inc)+row('Necesidades',T.n,PT.n)+row('Gustos',T.w,PT.w)+row('Gastos totales',T.exp,PT.exp)+row('Ahorro',T.sav,PT.sav)+row('Inversión',T.inv,PT.inv)+
     '<tr class="tot"><td>Disponible del mes</td><td class="r">'+esc(fmt(T.free))+'</td><td class="r">'+esc(fmt(PT.free))+'</td><td class="r"></td></tr></table></div></div>';
+  h+='<div class="card"><h3>💼 Cuentas y billeteras</h3><div class="tblwrap"><table class="tbl"><tr><th>Cuenta</th><th>Tipo</th><th class="r">Saldo</th><th class="r">En '+S.cur+'</th></tr>'+
+    acctsSorted().map(function(a){var b=acctBal(a);return '<tr><td>'+esc(a.e)+' '+esc(a.n)+'</td><td>'+(a.k==='fisica'?'Física':'Virtual')+'</td><td class="r">'+esc(fmt(b,a.cur))+'</td><td class="r">'+esc(fmt(conv(b,a.cur,S.cur,ofiRate())))+'</td></tr>';}).join('')+
+    '<tr><td colspan="3">Subtotal física</td><td class="r">'+esc(fmt(A.fis))+'</td></tr><tr><td colspan="3">Subtotal virtual</td><td class="r">'+esc(fmt(A.vir))+'</td></tr>'+
+    '<tr class="tot"><td colspan="3">Total disponible</td><td class="r">'+esc(fmt(A.tot))+'</td></tr>'+
+    '<tr class="tot"><td colspan="3">Disponible en pesos (dólar oficial)</td><td class="r">'+esc(fmt(O.ars,'ARS'))+'</td></tr>'+
+    '<tr class="tot"><td colspan="3">Disponible en dólares (dólar oficial)</td><td class="r">'+esc(fmt(O.usd,'USD'))+'</td></tr></table></div><p class="hint">'+esc(ofiNote())+'.</p></div>';
+  h+='<div class="card"><h3>🧭 Análisis automático y recomendaciones</h3><div class="tips">'+tipsHtml(T)+'</div></div>';
   if(T.inc>0){
     var r2=function(l,p,real,inv){var obj=T.inc*p/100,ok=inv?real>=obj:real<=obj;
       return '<tr><td>'+l+' ('+p+'%)</td><td class="r">'+esc(fmt(obj))+'</td><td class="r">'+esc(fmt(real))+'</td><td class="r">'+(real/T.inc*100).toFixed(0)+'%</td><td>'+(ok?'✅ En regla':inv?'⚠️ Por debajo':'⚠️ Excedido')+'</td></tr>';};
@@ -1016,19 +1023,12 @@ function renderReport(){
   h+='<div class="card"><h3>📊 Evolución de los últimos 6 meses</h3>'+bars6()+'</div>';
   h+='<div class="card"><h3>🥧 Gastos por categoría</h3><div class="pie" id="rPieCat"></div></div>'+
      '<div class="card"><h3>🥧 Destino del ingreso</h3><div class="pie" id="rPieDist"></div></div>';
-  h+='<div class="card"><h3>💼 Cuentas y billeteras</h3><div class="tblwrap"><table class="tbl"><tr><th>Cuenta</th><th>Tipo</th><th class="r">Saldo</th><th class="r">En '+S.cur+'</th></tr>'+
-    S.accts.map(function(a){var b=acctBal(a);return '<tr><td>'+esc(a.e)+' '+esc(a.n)+'</td><td>'+(a.k==='fisica'?'Física':'Virtual')+'</td><td class="r">'+esc(fmt(b,a.cur))+'</td><td class="r">'+esc(fmt(conv(b,a.cur,S.cur,ofiRate())))+'</td></tr>';}).join('')+
-    '<tr><td colspan="3">Subtotal física</td><td class="r">'+esc(fmt(A.fis))+'</td></tr><tr><td colspan="3">Subtotal virtual</td><td class="r">'+esc(fmt(A.vir))+'</td></tr>'+
-    '<tr class="tot"><td colspan="3">Total disponible</td><td class="r">'+esc(fmt(A.tot))+'</td></tr>'+
-    '<tr class="tot"><td colspan="3">Disponible en pesos (dólar oficial)</td><td class="r">'+esc(fmt(O.ars,'ARS'))+'</td></tr>'+
-    '<tr class="tot"><td colspan="3">Disponible en dólares (dólar oficial)</td><td class="r">'+esc(fmt(O.usd,'USD'))+'</td></tr></table></div><p class="hint">'+esc(ofiNote())+'.</p></div>';
   if(cats.length)h+='<div class="card"><h3>🏷️ Detalle por categoría</h3><div class="tblwrap"><table class="tbl"><tr><th>Categoría</th><th>Tipo</th><th class="r">Monto</th><th class="r">% del gasto</th></tr>'+
     cats.map(function(c){return '<tr><td>'+esc(c.n)+'</td><td>'+(c.g==='N'?'Necesidad':'Gusto')+'</td><td class="r">'+esc(fmt(c.v))+'</td><td class="r">'+(c.v/T.exp*100).toFixed(1)+'%</td></tr>';}).join('')+'</table></div></div>';
-  h+='<div class="card"><h3>🧭 Análisis automático y recomendaciones</h3><div class="tips">'+tipsHtml(T)+'</div></div>';
   if(S.aiRep&&S.aiRep.ym===ym)h+='<div class="card flow"><h3>🤖 Análisis con IA (Claude)</h3><p class="hint" style="margin:0 0 8px">Generado el '+esc(S.aiRep.date)+' con '+esc(S.aiRep.model||'Claude')+
     '. Es información general, no asesoramiento financiero profesional.</p>'+mdLite(S.aiRep.text)+'</div>';
-  var mv=monthTx(view.y,view.m).sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0;});
-  h+='<div class="card flow"><h3>📋 Movimientos del mes ('+mv.length+')</h3>'+(mv.length?'<div class="tblwrap"><table class="tbl"><tr><th>Fecha</th><th>Detalle</th><th>Categoría</th><th>Cuenta</th><th class="r">Monto</th></tr>'+
+  var mv=monthTx(view.y,view.m).sort(function(a,b){return val(b)-val(a);});
+  h+='<div class="card flow"><h3>📋 Movimientos del mes ('+mv.length+') · de mayor a menor monto</h3>'+(mv.length?'<div class="tblwrap"><table class="tbl"><tr><th>Fecha</th><th>Detalle</th><th>Categoría</th><th>Cuenta</th><th class="r">Monto</th></tr>'+
     mv.map(function(t){var c=catOf(t);return '<tr><td>'+esc(t.date.split('-').reverse().join('/'))+'</td><td>'+esc(t.desc||c.n)+'</td><td>'+esc(t.type==='gasto'?c.n:TYPE_LBL[t.type]+(t.type==='transfer'?'':' · '+c.n))+'</td><td>'+esc(acctLbl(t))+
       '</td><td class="r">'+(t.type==='ingreso'?'+':t.type==='transfer'?'⇄':'−')+' '+esc(fmt(t.amt,t.cur))+'</td></tr>';}).join('')+'</table></div>':'<div class="empty">Sin movimientos este mes.</div>')+'</div>';
   $('report').innerHTML=h;
