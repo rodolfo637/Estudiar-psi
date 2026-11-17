@@ -15,7 +15,7 @@ if [ ! -f "$KS" ]; then
 fi
 
 aapt package -f -M AndroidManifest.xml -S res -A out/assets -I "$JAR" -F out/unsigned.apk
-javac -nowarn -source 8 -target 8 -bootclasspath "$JAR" -d out/classes src/ar/misgastos/app/MainActivity.java
+javac -nowarn -source 8 -target 8 -bootclasspath "$JAR" -d out/classes src/ar/misgastos/app/*.java
 dalvik-exchange --dex --min-sdk-version=23 --output=out/classes.dex out/classes
 (cd out && aapt add unsigned.apk classes.dex >/dev/null)
 zipalign -f 4 out/unsigned.apk out/aligned.apk

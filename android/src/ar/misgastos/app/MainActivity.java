@@ -213,6 +213,32 @@ public class MainActivity extends Activity {
             }).start();
         }
 
+        /** Notificaciones de Mercado Pago guardadas por LectorNotificaciones (se vacían al leerlas). */
+        @JavascriptInterface
+        public String notifTomar() {
+            return LectorNotificaciones.tomar(MainActivity.this);
+        }
+
+        /** true si el usuario habilitó a la app en "Acceso a notificaciones". */
+        @JavascriptInterface
+        public boolean notifPermiso() {
+            String s = android.provider.Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
+            return s != null && s.contains(getPackageName());
+        }
+
+        @JavascriptInterface
+        public void notifAbrirAjustes() {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    try {
+                        startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+                    } catch (ActivityNotFoundException e) {
+                        aviso("Abrí Ajustes del teléfono y buscá \"Acceso a notificaciones\"");
+                    }
+                }
+            });
+        }
+
         /** Abre el diálogo de impresión del sistema: ahí se elige "Guardar como PDF". */
         @JavascriptInterface
         public void imprimir(final String nombre) {
@@ -340,6 +366,13 @@ public class MainActivity extends Activity {
                 }
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Al volver a la app (por ejemplo, desde los ajustes de notificaciones) la página busca movimientos nuevos.
+        if (web != null) web.evaluateJavascript("window.__onResume&&window.__onResume()", null);
     }
 
     @Override
